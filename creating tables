@@ -1,0 +1,52 @@
+-- CREATE TABLE users (
+--     users_id SERIAL PRIMARY KEY,
+--     username VARCHAR(50) UNIQUE NOT NULL,
+--     email VARCHAR(255) UNIQUE NOT NULL,
+--     password VARCHAR(50) NOT NULL
+-- )
+
+
+-- CREATE TABLE bookings (
+--     booking_id SERIAL PRIMARY KEY,
+--     book_id VARCHAR(255),
+--     users_id INT,
+--     authors_id INT,
+--     booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     return_date DATE,
+--     FOREIGN KEY(users_id) REFERENCES users(users_id),
+--     FOREIGN KEY(authors_id) REFERENCES authors(authors_id)
+-- )
+
+-- CREATE TABLE books (
+--      id SERIAL PRIMARY KEY,
+--      book_id TEXT UNIQUE NOT NULL, 
+--      category_id INT,
+--      title VARCHAR(255) NOT NULL,
+--      authors_id INT,
+--      genre TEXT,
+--      availability BOOLEAN DEFAULT TRUE,
+--      published_date TEXT,
+--      FOREIGN KEY (category_id) REFERENCEs categories(category_id),
+--      FOREIGN KEY (authors_id) REFERENCES authors(authors_id)
+-- )
+
+-- ALTER TABLE books
+-- ALTER COLUMN book_id TYPE VARCHAR(255);
+
+
+-- ALTER TABLE authors ADD CONSTRAINT unique_author UNIQUE (name);
+SELECT COUNT(*) FROM books;
+
+
+
+
+-- CREATE TABLE authors(
+--     authors_id SERIAL PRIMARY KEY,
+--     name VARCHAR(255)
+-- )
+
+-- CREATE TABLE categories (
+--     category_id SERIAL PRIMARY KEY,
+--     genre_name VARCHAR(255) NOT NULL,
+--     description VARCHAR
+-- )
