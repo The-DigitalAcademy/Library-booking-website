@@ -16,15 +16,16 @@
 --     FOREIGN KEY(users_id) REFERENCES users(users_id),
 --     FOREIGN KEY(authors_id) REFERENCES authors(authors_id)
 -- )
-ALTER TABLE bookings
-ADD COLUMN  status VARCHAR(50) DEFAULT 'Pending'
+-- ALTER TABLE bookings
+-- ADD COLUMN  status VARCHAR(50) DEFAULT 'Pending'
 -- ALTER TABLE bookings
 -- ADD CONSTRAINT fk_book_id FOREIGN KEY (book_id)
 -- REFERENCES books(book_id);
 -- ALTER TABLE bookings
 -- ADD COLUMN book_id INT;
 
-
+ALTER TABLE users
+ALTER COLUMN password TYPE VARCHAR(255)
 
 -- CREATE TABLE books (
 --      id SERIAL PRIMARY KEY,
