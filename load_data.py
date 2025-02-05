@@ -6,7 +6,7 @@ def get_db_connection():
     conn = psycopg2.connect(
         dbname="store_books",
         user="postgres",
-        password="",  # Replace with your actual password
+        password="",  
         host="localhost"
     )
     return conn
