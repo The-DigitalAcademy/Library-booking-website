@@ -19,6 +19,8 @@ CREATE TABLE authors (
 );
 
 
+ALTER TABLE books
+ADD COLUMN cover_url VARCHAR(255);
 CREATE TABLE books (
      id SERIAL PRIMARY KEY,
      book_id VARCHAR , 
