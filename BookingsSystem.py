@@ -1,5 +1,4 @@
-#pip install requests
-#pip install psycopg2
+
 
 import requests
 import psycopg2
@@ -9,7 +8,7 @@ def get_db_connection():
     conn = psycopg2.connect(
         dbname="store_books",
         user="postgres",
-        password="",  # Replace with your actual password
+        password="",  
         host="localhost"
     )
     return conn
@@ -38,28 +37,28 @@ def store_books(books):
         
         # Insert category
         for category in categories:
-            cur.execute("INSERT INTO categories (name) VALUES (%s) ON CONFLICT (name) DO NOTHING RETURNING category_id", (category,))
+            cur.execute("INSERT INTO categories (category_name) VALUES (%s) ON CONFLICT (category_name) DO NOTHING RETURNING category_id", (category,))
             category_id = cur.fetchone()
             if category_id:
                 category_id = category_id[0]
             else:
-                cur.execute("SELECT category_id FROM categories WHERE name = %s", (category,))
+                cur.execute("SELECT category_id FROM categories WHERE category_name = %s", (category,))
                 category_id = cur.fetchone()[0]
         
         # Insert author
         for author in authors:
-            cur.execute("INSERT INTO authors (name) VALUES (%s) ON CONFLICT (name) DO NOTHING RETURNING author_id", (author,))
+            cur.execute("INSERT INTO authors (authors_name) VALUES (%s) ON CONFLICT (authors_name) DO NOTHING RETURNING author_id", (author,))
             author_id = cur.fetchone()
             if author_id:
                 author_id = author_id[0]
             else:
-                cur.execute("SELECT author_id FROM authors WHERE name = %s", (author,))
+                cur.execute("SELECT author_id FROM authors WHERE authors_name = %s", (author,))
                 author_id = cur.fetchone()[0]
         
         # Insert book
         cur.execute(
-            "INSERT INTO books (title, description, availability, published_date, category_id, author_id) VALUES (%s, %s, %s, %s, %s, %s)",
-            (title, description, True, published_date, category_id, author_id)
+            "INSERT INTO books (book_id, title, description, availability, published_date, category_id, author_id) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (book['id'], title, description, True, published_date, category_id, author_id)
         )
     
     conn.commit()
@@ -67,7 +66,7 @@ def store_books(books):
     conn.close()
 
 if __name__ == "__main__":
-    api_key = "AIzaSyANI3YMtiYA_9fa0lmlaXzaSFLrQA1R9Sk"  # Replace with your actual API key
-    query = "Python programming"  # Replace with your desired search query
+    api_key = "AIzaSyANI3YMtiYA_9fa0lmlaXzaSFLrQA1R9Sk"  
+    query = "Python programming"  
     books = fetch_books_from_google(query, api_key)
     store_books(books)
