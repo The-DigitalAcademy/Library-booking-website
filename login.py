@@ -2,7 +2,7 @@ import streamlit as st
 from database import authenticate_user
 
 def show():
-    st.title("Login Page")
+    st.title("Login:smile:")
 
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")

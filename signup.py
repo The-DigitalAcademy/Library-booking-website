@@ -2,7 +2,7 @@ import streamlit as st
 from database import create_user
 
 def show():
-    st.title("Sign Up Page")
+    st.title("Sign Up")
 
     username = st.text_input("Username")
     email = st.text_input("Email")
