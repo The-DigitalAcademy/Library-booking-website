@@ -53,7 +53,9 @@
 -- ALTER TABLE books  
 -- ADD COLUMN book_id VARCHAR UNIQUE;
 
-ALTER TABLE users
+-- ALTER TABLE users
+-- RENAME COLUMN users_id TO user_id
+ALTER TABLE books
 RENAME COLUMN users_id TO user_id
 
 
