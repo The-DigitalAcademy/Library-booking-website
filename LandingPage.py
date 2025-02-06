@@ -57,13 +57,13 @@ with header_col2:
 genres = fetch_genres()
 books = fetch_books()
 
-default_cover_url = "/Users/tshmacm1173/Desktop/Sprint3/Library-booking-website/coverpage.jpg"  
+default_cover_url = "/Users/tshmacm1173/Desktop/Sprint3/Library-booking-website/coverpage.jpg"  # Replace with the path to your default cover image
 
 for genre_id, genre_name in genres:
     st.subheader(genre_name)
     genre_books = [book for book in books if book[4] == genre_id]
     
-    for book in genre_books[:3]:  # Show only the first 3 books for each genre
+    for index, book in enumerate(genre_books[:3]):  # Show only the first 3 books for each genre
         availability, title, author, book_id, _, cover_url = book
         book_col1, book_col2 = st.columns([1, 3])
         
@@ -76,4 +76,4 @@ for genre_id, genre_name in genres:
             st.write("Available" if availability else "Not Available")
             st.write(f"**{title}**")
             st.write(f"by {author}")
-            st.button("Borrow a book", key=book_id)
+            st.button("Borrow a book", key=f"{book_id}_{index}")
