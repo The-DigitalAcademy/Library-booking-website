@@ -50,7 +50,10 @@
 --     FOREIGN KEY(author_id) REFERENCES authors(author_id)
 -- );
 
+-- ALTER TABLE books  
+-- ADD COLUMN book_id VARCHAR UNIQUE;
 
-
+ALTER TABLE users
+RENAME COLUMN users_id TO user_id
 
 
