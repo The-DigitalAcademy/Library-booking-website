@@ -4,10 +4,10 @@ import bcrypt
 # Database connection
 def get_db_connection():
     return psycopg2.connect(
-        dbname="store_books",
-        user="postgres",
-        password="",
-        host="localhost"
+        dbname="events",
+        user="dylan",
+        password="super123duper",  # Replace with your actual password
+        host="129.232.211.166"
     )
 
 # Function to create user
