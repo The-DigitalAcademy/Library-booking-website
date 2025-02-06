@@ -1,37 +1,20 @@
 import streamlit as st
 from login import show as show_login
 from signup import show as show_signup
-from home import show_home_page  # Assuming your home page logic is in home.py or add to your main file
+from home import show as show_home
+from reset_password import show_reset_password
 
-# Set up session state for user login (check if username is present)
-if "username" not in st.session_state:
-    st.session_state.username = None
+st.set_page_config(page_title="Library Booking", layout="wide")
 
-# Streamlit interface (Navigation Bar)
-st.set_page_config(page_title="Library Booking System", layout="wide")
+if "page" not in st.session_state:
+    st.session_state.page = "Login"
 
-# Navigation across the top
-col1, col2, col3, col4 = st.columns([1, 1, 1, 1])
-with col1:
-    if st.button("Home"):
-        if st.session_state.username:
-            show_home_page()  # Show home page if logged in
-        else:
-            st.warning("Please log in first.")
-with col2:
-    if st.button("Log In"):
-        show_login()  # Direct to login page
-with col3:
-    if st.button("Sign Up"):
-        show_signup()  # Direct to sign-up page
-with col4:
-    if st.button("Logout"):
-        st.session_state.username = None
-        st.success("Logged out successfully.")
-        st.experimental_rerun()
+if st.session_state.page == "Login":
+    show_login()
+elif st.session_state.page == "Sign Up":
+    show_signup()
+elif st.session_state.page == "Home":
+    show_home()
+elif st.session_state.page == "Reset Password":
+    show_reset_password()
 
-# # Main logic
-# if st.session_state.username:  # If the user is logged in
-#     show_home_page()  # Show home page if logged in
-# else:
-#     show_landing()  # If not logged in, show landing page with login/sign-up options

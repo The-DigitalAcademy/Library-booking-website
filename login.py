@@ -1,19 +1,25 @@
 import streamlit as st
 from database import authenticate_user
+from reset_password import show_reset_password 
 
 def show():
-    st.title("Login:smile:")
+    st.title("Login")
 
-    username = st.text_input("Username")
+    email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
     if st.button("Login"):
-        if authenticate_user(username, password):
-            st.session_state.authenticated = True
+        # Add login authentication logic here
+        if email and password:
             st.success("Login successful!")
-            st.switch_page("landing.py")  # Redirect to the landing page
-        else:
-            st.error("Invalid username or password")
+            st.session_state.page = "Home"
+            st.rerun()
 
-if __name__ == "__main__":
-    show()
+        else:
+            st.error("Invalid credentials")
+
+    if st.button("Forgot Password?"):
+        st.session_state.page = "Reset Password"
+        st.rerun()
+
+
