@@ -63,16 +63,15 @@ for genre_id, genre_name in genres:
     st.subheader(genre_name)
     genre_books = [book for book in books if book[4] == genre_id]
     
+    book_cols = st.columns(3)  # Create 3 columns for books
     for index, book in enumerate(genre_books[:3]):  # Show only the first 3 books for each genre
         availability, title, author, book_id, _, cover_url = book
-        book_col1, book_col2 = st.columns([1, 3])
         
-        with book_col1:
+        with book_cols[index]:
             if cover_url == 'No cover' or not cover_url:
-                st.image(default_cover_url, width=100)  # Use the default cover image
+                st.image(default_cover_url, width=200)  # Use the default cover image
             else:
-                st.image(cover_url, width=100)  # Fetch the cover URL from the database
-        with book_col2:
+                st.image(cover_url, width=200)  # Fetch the cover URL from the database
             st.write("Available" if availability else "Not Available")
             st.write(f"**{title}**")
             st.write(f"by {author}")
