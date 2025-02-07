@@ -2,14 +2,18 @@ import streamlit as st
 from login import show as show_login
 from signup import show as show_signup
 from home import show as show_home
-from reset_password import show_reset_password
+from reset_password import  show_reset_password
+from LandingPage import show as show_Landing_Page
+
 
 st.set_page_config(page_title="Library Booking", layout="wide")
 
 if "page" not in st.session_state:
-    st.session_state.page = "Login"
+    st.session_state.page = "LandingPage"
 
-if st.session_state.page == "Login":
+if st.session_state.page == "LandingPage":
+    show_Landing_Page()
+elif st.session_state.page == "Login":
     show_login()
 elif st.session_state.page == "Sign Up":
     show_signup()

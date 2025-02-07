@@ -4,10 +4,10 @@ import psycopg2
 # Database connection
 def get_db_connection():
     conn = psycopg2.connect(
-        dbname="store_books",
-        user="postgres",
-        password="",  
-        host="localhost"
+        dbname="events",
+        user="dylan",
+        password="super123duper",  
+        host="129.232.211.166"
     )
     return conn
 

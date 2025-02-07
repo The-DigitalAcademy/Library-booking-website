@@ -5,10 +5,10 @@ import psycopg2
 # Database connection
 def get_db_connection():
     conn = psycopg2.connect(
-        dbname="store_books",
-        user="postgres",
-        password="",  # Replace with your actual password
-        host="localhost"
+        dbname="events",
+        user="dylan",
+        password="super123duper",  # Replace with your actual password
+        host="129.232.211.166"
     )
     return conn
 
@@ -17,7 +17,7 @@ def fetch_books():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        SELECT b.availability, b.title, a.authors_name, b.book_id, b.category_id, b.cover_url
+        SELECT b.availability, b.title, a.author_name, b.book_id, b.category_id, b.cover_url
         FROM books b
         JOIN authors a ON b.author_id = a.author_id
     """)
@@ -37,12 +37,13 @@ def fetch_genres():
     return genres
 
 # Streamlit interface
+# Streamlit interface
 st.set_page_config(page_title="Malawi Library", layout="wide")
 
 # Logo and title
 header_col1, header_col2 = st.columns([1, 3])
 with header_col1:
-    st.image("/Users/tshmacm1173/Desktop/Sprint3/Library-booking-website/MalawiLibraryLogo.jpg", width=100)  
+    st.image("assets/MalawiLibraryLogo.jpg", width=100)  # Corrected path
     st.write("Malawi Library")
 with header_col2:
     search_col, login_col, signup_col = st.columns([3, 1, 1])
@@ -57,7 +58,7 @@ with header_col2:
 genres = fetch_genres()
 books = fetch_books()
 
-default_cover_url = "/Users/tshmacm1173/Desktop/Sprint3/Library-booking-website/coverpage.jpg"  # Replace with the path to your default cover image
+default_cover_url = "assets/coverpage.jpg"  # Corrected path
 
 for genre_id, genre_name in genres:
     st.subheader(genre_name)

@@ -5,6 +5,7 @@
             "server": "localhost",
             "port": 5432,
             "driver": "PostgreSQL",
+<<<<<<< HEAD
             "name": "studentinfo",
             "database": "studentinfo",
             "username": "postgres",
@@ -16,6 +17,9 @@
             "port": 5432,
             "driver": "PostgreSQL",
             "name": "movies",
+=======
+            "name": "movies ",
+>>>>>>> d460dc0b4b004e72ec7489da82f3bb565bccea5e
             "database": "movies",
             "username": "postgres",
             "password": ""
