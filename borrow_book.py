@@ -8,7 +8,7 @@ def get_db_connection():
     conn = psycopg2.connect(
         dbname="events",
         user="dylan",
-        password="super123duper",  # Replace with your actual password
+        password="super123duper",  
         host="129.232.211.166"
     )
     return conn
