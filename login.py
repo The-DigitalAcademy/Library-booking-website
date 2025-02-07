@@ -2,6 +2,7 @@ import streamlit as st
 from database import authenticate_user
 from reset_password import show_reset_password 
 
+
 def show():
     st.title("Login")
 
@@ -9,17 +10,22 @@ def show():
     password = st.text_input("Password", type="password")
 
     if st.button("Login"):
-        # Add login authentication logic here
-        if email and password:
+        if not email or not password:
+            st.error("Please enter both email and password")
+        elif authenticate_user(email, password):
             st.success("Login successful!")
             st.session_state.page = "Home"
             st.rerun()
-
         else:
-            st.error("Invalid credentials")
+            st.error("Invalid email or password. Please sign up if you don’t have an account.")
 
     if st.button("Forgot Password?"):
         st.session_state.page = "Reset Password"
         st.rerun()
+
+# Ensure the script runs independently
+if __name__ == "__main__":
+    show()
+    
 
 
