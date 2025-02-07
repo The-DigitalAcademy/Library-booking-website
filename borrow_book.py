@@ -1,4 +1,5 @@
 
+
 import streamlit as st
 import psycopg2
 from datetime import date, timedelta
@@ -8,7 +9,7 @@ def get_db_connection():
     conn = psycopg2.connect(
         dbname="events",
         user="dylan",
-        password="super123duper",  
+        password="super123duper",  # Replace with your actual password
         host="129.232.211.166"
     )
     return conn
@@ -53,6 +54,7 @@ for book in books:
     st.write(f"**Author:** {author}")
     st.write(f"**Availability:** {'Available' if availability else 'Not Available'}")
     st.write(f"**Description:** {description}")
+    st.image(cover_url, width=150)  # Display the book cover
     
     if availability:
         collection_date = st.date_input("Collection Date", min_value=date.today(), max_value=date.today() + timedelta(days=2), key=f"collection_{book_id}")
