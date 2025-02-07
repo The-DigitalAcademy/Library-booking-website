@@ -46,12 +46,12 @@ def store_books(books):
         
         # Insert author
         for author in authors:
-            cur.execute("INSERT INTO authors (authors_name) VALUES (%s) ON CONFLICT (authors_name) DO NOTHING RETURNING author_id", (author,))
+            cur.execute("INSERT INTO authors (author_name) VALUES (%s) ON CONFLICT (author_name) DO NOTHING RETURNING author_id", (author,))
             author_id = cur.fetchone()
             if author_id:
                 author_id = author_id[0]
             else:
-                cur.execute("SELECT author_id FROM authors WHERE authors_name = %s", (author,))
+                cur.execute("SELECT author_id FROM authors WHERE author_name = %s", (author,))
                 author_id = cur.fetchone()[0]
         
         # Insert book
