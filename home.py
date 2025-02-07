@@ -1,178 +1,94 @@
 import streamlit as st
 import psycopg2
+from database import get_db_connection
 
-def get_db_connection():
-    return psycopg2.connect(
-        dbname="events",
-        user="dylan",
-        password="super123duper",  # Replace with your actual password
-        host="129.232.211.166"
-    )
+st.set_page_config(page_title="Malawi Library", layout="wide")
 
-# Function to add a book
-def add_book(title, author, category_id, cover_url, user_id, published_date, description):
-    conn = get_db_connection()
-    cur = conn.cursor()
+# Sidebar Navigation
+st.sidebar.image("assets/MalawiLibraryLogo.jpg", width=150)
+st.sidebar.markdown("## Malawi Library")
 
-     # Insert author if it doesn't exist
-    cur.execute("INSERT INTO authors (author_name) VALUES (%s) ON CONFLICT (author_name) DO NOTHING RETURNING author_id", (author,))
-    author_id = cur.fetchone()
+# Sidebar Navigation Buttons
+tab = st.sidebar.radio("Navigation", ["Home", "Add Book", "Profile", "About Us", "Logout"])
 
-    if not author_id:  # If author already exists, fetch their ID
-        cur.execute("SELECT author_id FROM authors WHERE author_name = %s", (author,))
-        author_id = cur.fetchone()[0]
-    else:
-        author_id = author_id[0]
+# Handle Logout
+if tab == "Logout":
+    st.session_state.page = "Login"
+    st.rerun()
 
-# Insert book into the books table
-    cur.execute("""
-        INSERT INTO books (title, author_id, category_id, cover_url, user_id, published_date, availability, description)
-        VALUES (%s, %s, %s, %s, %s, %s, TRUE, %s)
-    """, (title, author_id, category_id, cover_url, user_id, published_date, description))
+# Page Content
+if tab == "Home":
+    st.subheader("Welcome to the Library Booking System!")
+    st.write("Search for books and manage your library.")
 
-    conn.commit()
-    cur.close()
-    conn.close()
-    st.success("Book added successfully!")
-    
-# Function to fetch books owned by the logged-in user
-def fetch_user_books(user_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT book_id, title FROM books WHERE user_id = %s", (user_id,))
-    books = cur.fetchall()
-    cur.close()
-    conn.close()
-    return books
+    # Search Bar
+    query = st.text_input("Search Books")
+    search_button = st.button("Search")
 
-# Delete book function (only by owner)
-def delete_book(book_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("DELETE FROM books WHERE book_id = %s", (book_id,))
-    conn.commit()
-    cur.close()
-    conn.close()
-    st.success("Book deleted successfully!")
-    
-    # Book a book (others can book available books)
-def book_book(book_id, user_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT availability FROM books WHERE book_id = %s", (book_id,))
-    availability = cur.fetchone()[0]
+    # Fetch books and genres
+    def fetch_books():
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT b.availability, b.title, a.author_name, b.book_id, b.category_id, b.cover_url, b.description
+            FROM books b
+            JOIN authors a ON b.author_id = a.author_id
+        """)
+        books = cur.fetchall()
+        cur.close()
+        conn.close()
+        return books
 
-    if availability:
-        cur.execute("INSERT INTO bookings (book_id, user_id, booking_date, status) VALUES (%s, %s, CURRENT_DATE, 'booked')", (book_id, user_id))
-        cur.execute("UPDATE books SET availability = FALSE WHERE book_id = %s", (book_id,))
-        conn.commit()
-        st.success("Book successfully booked!")
-    else:
-        st.warning("This book is already booked!")
+    def fetch_genres():
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT category_id, category_name FROM categories")
+        genres = cur.fetchall()
+        cur.close()
+        conn.close()
+        return genres
 
-    cur.close()
-    conn.close()
+    books = fetch_books()
+    genres = fetch_genres()
 
-# Show user books and allow management
-def show_books():
-    logged_in_user_id = st.session_state.get("user_id")
+    if search_button and query:
+        books = [book for book in books if query.lower() in book[1].lower()]
 
-    if not logged_in_user_id:
-        st.warning("You must be logged in to add or manage books.")
-        return
+    default_cover_url = "assets/coverpage.jpg"
 
-    # Fetch user books
-    user_books = fetch_user_books(logged_in_user_id)
+    for genre_id, genre_name in genres:
+        st.subheader(genre_name)
+        genre_books = [book for book in books if book[4] == genre_id]
+        book_cols = st.columns(3)
+        for index, book in enumerate(genre_books[:3]):
+            availability, title, author, book_id, _, cover_url, description = book
+            with book_cols[index]:
+                st.markdown(
+                    f"""
+                    <div class="book-container">
+                        <div class="availability">
+                            {"Available" if availability else "Not Available"}
+                        </div>
+                        <div class="book-details">
+                            <img src="{cover_url if cover_url != 'No cover' else default_cover_url}" width="200">
+                            <strong>{title}</strong><br>
+                            by {author}
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+                with st.expander("Show Description"):
+                    st.write(description)
+                st.button("Borrow a book", key=f"{book_id}_{index}")
 
-    if user_books:
-        st.subheader("Your Books")
-        for book_id, title in user_books:
-            col1, col2 = st.columns([3, 1])
-            with col1:
-                st.write(f"📖 {title}")
-            with col2:
-                if st.button("Delete", key=f"delete_{book_id}"):
-                    delete_book(book_id)
-                    
- # Book adding form
-    st.subheader("Add a New Book")
-    title = st.text_input("Book Title")
-    author = st.text_input("Author")
-    category_id = st.number_input("Category ID", min_value=1)
-    cover_url = st.text_input("Cover Image URL")
-    published_date = st.date_input("Published Date")
-    description = st.text_area("Description")
+elif tab == "Add Book":
+    st.write("Add Book Page")
 
-    if st.button("Add Book"):
-        if title and author and cover_url:
-            add_book(title, author, category_id, cover_url, logged_in_user_id, published_date, description)
-        else:
-            st.error("Please fill in all fields.")
-            
-    # Function to allow other users to browse and book books
-def browse_books():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT book_id, title, availability FROM books")
-    books = cur.fetchall()
-    cur.close()
-    conn.close()
+elif tab == "Profile":
+    st.subheader("Your Profile")
+    st.write("User profile details will be shown here.")
 
-    st.subheader("Browse Books")
-    for book_id, title, availability in books:
-        st.write(f"📖 {title} - {'Available' if availability else 'Not Available'}")
-        if availability:
-            if st.button(f"Book {title}", key=book_id):
-                logged_in_user_id = st.session_state.get("user_id")
-                if logged_in_user_id:
-                    book_book(book_id, logged_in_user_id)
-                else:
-                    st.warning("You must be logged in to book a book.")
-    
-def show():
-    st.title("Library Booking System")
-
-    # Create a top navigation bar using columns
-    col1, col2, col3, col4, col5 = st.columns(5)
-
-    with col1:
-        if st.button("Home"):
-            st.session_state.tab = "Home"
-
-    with col2:
-        if st.button("Add Book"):
-            st.session_state.tab = "Add Book"
-
-    with col3:
-        if st.button("Profile"):
-            st.session_state.tab = "Profile"
-
-    with col4:
-        if st.button("About Us"):
-            st.session_state.tab = "About Us"
-
-    with col5:
-        if st.button("Logout"):
-            st.session_state.page = "Login"  # Log out and go back to login
-            st.rerun()
-
-
-    # Display the selected tab's content
-    if "tab" not in st.session_state:
-        st.session_state.tab = "Home"  # Default tab is Home
-
-    if st.session_state.tab == "Home":
-        st.subheader("Welcome to the Library Booking System!")
-        st.write("Search for books and manage your library.")
-
-    elif st.session_state.tab == "Add Book":
-        show_books()
-
-    elif st.session_state.tab == "Profile":
-        st.subheader("Your Profile")
-        st.write("User profile details will be shown here.")
-
-    elif st.session_state.tab == "About Us":
-        st.subheader("About Us")
-        st.write("This is a library booking system where users can search for books, add books, and manage their collections.")
-
+elif tab == "About Us":
+    st.subheader("About Us")
+    st.write("This is a library booking system where users can search for books, add books, and manage their collections.")
