@@ -1,5 +1,7 @@
+
 import streamlit as st
 import psycopg2
+from datetime import date, timedelta
 
 # Database connection
 def get_db_connection():
@@ -26,15 +28,15 @@ def fetch_books():
     return books
 
 # Borrow a book
-def borrow_book(book_id, user_id):
+def borrow_book(book_id, user_id, collection_date, return_date):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        INSERT INTO bookings (id, user_id, author_id)
-        SELECT b.id, %s, b.author_id
+        INSERT INTO bookings (id, user_id, author_id, collection_date, return_date)
+        SELECT b.id, %s, b.author_id, %s, %s
         FROM books b
         WHERE b.book_id = %s
-    """, (user_id, book_id))
+    """, (user_id, collection_date, return_date, book_id))
     conn.commit()
     cur.close()
     conn.close()
@@ -51,7 +53,17 @@ for book in books:
     st.write(f"**Author:** {author}")
     st.write(f"**Availability:** {'Available' if availability else 'Not Available'}")
     st.write(f"**Description:** {description}")
-    if st.button("Borrow", key=book_id):
-        user_id = 1  # Replace with the actual user ID
-        borrow_book(book_id, user_id)
-        st.success(f"Book '{title}' borrowed successfully!")
+    
+    if availability:
+        collection_date = st.date_input("Collection Date", min_value=date.today(), max_value=date.today() + timedelta(days=2), key=f"collection_{book_id}")
+        return_date = st.date_input("Return Date", min_value=date.today(), max_value=date.today() + timedelta(days=30), key=f"return_{book_id}")
+        
+        if st.button("Borrow", key=book_id):
+            user_id = 1  # Replace with the actual user ID
+            if collection_date > date.today() + timedelta(days=2):
+                st.error("You have two days to collect the book after booking it.")
+            elif return_date > collection_date + timedelta(days=30):
+                st.error("You cannot keep the book for more than a month.")
+            else:
+                borrow_book(book_id, user_id, collection_date, return_date)
+                st.success(f"Book '{title}' borrowed successfully!")
