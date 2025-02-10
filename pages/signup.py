@@ -21,14 +21,14 @@ def register_user(username, email, password):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM users WHERE email = %s", (email,))
+    cur.execute("SELECT * FROM userz WHERE email = %s", (email,))
     existing_user = cur.fetchone()
     if existing_user:
         st.error("Email already exists. Please use a different email.")
         return
 
     # Insert new user
-    cur.execute("INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
+    cur.execute("INSERT INTO userz (username, email, password) VALUES (%s, %s, %s)",
                 (username, email, password))
 
     conn.commit()
