@@ -1,4 +1,3 @@
-
 import streamlit as st
 import psycopg2
 
@@ -7,7 +6,7 @@ def get_db_connection():
     conn = psycopg2.connect(
         dbname="events",
         user="dylan",
-        password="super123duper",  
+        password="super123duper",  # Replace with your actual password
         host="129.232.211.166"
     )
     return conn
@@ -105,8 +104,8 @@ def update_book(book_id, user_id, title, author_name, category_name, cover_url, 
 # Streamlit interface
 st.set_page_config(page_title="Book Management", layout="wide")
 
-
-user_id = 1  
+# User ID (replace with actual user authentication)
+user_id = 1  # Replace with the actual user ID
 
 # Add a book
 st.header("Add a Book")
