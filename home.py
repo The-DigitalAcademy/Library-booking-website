@@ -10,7 +10,7 @@ st.sidebar.image("assets/MalawiLibraryLogo.jpg", width=150)
 st.sidebar.markdown("## Malawi Library")
 
 # Sidebar Navigation Buttons
-tab = st.sidebar.radio("Navigation", ["Home", "Add Book", "Profile", "About Us", "Logout"])
+tab = st.sidebar.radio("Navigation", ["Home", "Add Book", "Profile", "Logout"])
 
 # Handle Logout
 if tab == "Logout":
@@ -90,6 +90,18 @@ elif tab == "Profile":
     st.subheader("Your Profile")
     st.write("User profile details will be shown here.")
 
-elif tab == "About Us":
-    st.subheader("About Us")
-    st.write("This is a library booking system where users can search for books, add books, and manage their collections.")
+st.markdown("<hr>", unsafe_allow_html=True)
+col1, col2, col3 = st.columns(3)
+
+with col1:
+        st.subheader("About Us")
+        st.write("This is a library booking system where users can search for books, add books, and manage their collections.")
+    
+with col2:
+        st.subheader("Contact Us")
+        st.write("Email: contact@malawilibrary.com")
+        st.write("Phone: +123 456 7890")
+    
+with col3:
+        st.subheader("Location")
+        st.write("123 Library Street, City, Country")
