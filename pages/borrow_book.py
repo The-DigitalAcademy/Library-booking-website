@@ -4,7 +4,7 @@ import streamlit as st
 import psycopg2
 from datetime import date, timedelta
 
-# Database connection
+
 def get_db_connection():
     conn = psycopg2.connect(
         dbname="events",

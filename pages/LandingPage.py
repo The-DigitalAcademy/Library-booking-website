@@ -128,6 +128,8 @@
 import streamlit as st
 import requests
 import psycopg2
+from streamlit_extras.switch_page_button import switch_page
+
 
 # Database connection
 def get_db_connection():
@@ -224,10 +226,18 @@ with header_col2:
     with search_col:
         query = st.text_input("Search Books")
         search_button = st.button("Search")
-    with login_col:
-        st.button("Log In")
-    with signup_col:
-        st.button("Sign Up")
+    # with login_col:
+    #     st.button("Log In")
+    # with signup_col:
+    #     st.button("Sign Up"
+
+with login_col:
+    if st.button("Log In"):
+        switch_page('login')
+
+with signup_col :
+    if st.button("Sign Up"):
+        switch_page('signup')
 
 # Display genres and books
 genres = fetch_genres()

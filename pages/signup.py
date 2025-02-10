@@ -51,3 +51,5 @@ def show():
         else:
             st.error("All fields are required!")
 
+if __name__ == "__main__":
+    show()
