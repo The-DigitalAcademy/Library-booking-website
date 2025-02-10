@@ -1,6 +1,7 @@
 import streamlit as st
 import psycopg2
 from database import get_db_connection
+# from borrow_book import borrow_book
 
 st.set_page_config(page_title="Malawi Library", layout="wide")
 
