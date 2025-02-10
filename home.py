@@ -15,7 +15,7 @@ tab = st.sidebar.radio("Navigation", ["Home", "Add Book", "Profile", "Logout"])
 # Handle Logout
 if tab == "Logout":
     st.session_state.page = "Login"
-    st.rerun()
+    st.experimental_rerun()
 
 # Page Content
 if tab == "Home":
@@ -85,7 +85,7 @@ if tab == "Home":
 
 elif tab == "Add Book":
     st.subheader("Add a Book")
-    user_id = 1  # Replace with the actual user ID
+    user_id = 1  
     title = st.text_input("Title")
     author_name = st.text_input("Author Name")
     category_name = st.text_input("Category Name")
@@ -103,14 +103,14 @@ st.markdown("<hr>", unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 
 with col1:
-        st.subheader("About Us")
-        st.write("This is a library booking system where users can search for books, add books, and manage their collections.")
+    st.subheader("About Us")
+    st.write("This is a library booking system where users can search for books, add books, and manage their collections.")
     
 with col2:
-        st.subheader("Contact Us")
-        st.write("Email: contact@malawilibrary.com")
-        st.write("Phone: +123 456 7890")
+    st.subheader("Contact Us")
+    st.write("Email: contact@malawilibrary.com")
+    st.write("Phone: +123 456 7890")
     
 with col3:
-        st.subheader("Location")
-        st.write("123 Library Street, City, Country")
+    st.subheader("Location")
+    st.write("123 Library Street, City, Country")

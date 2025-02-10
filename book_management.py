@@ -6,7 +6,7 @@ def get_db_connection():
     conn = psycopg2.connect(
         dbname="events",
         user="dylan",
-        password="super123duper",  # Replace with your actual password
+        password="super123duper", 
         host="129.232.211.166"
     )
     return conn
@@ -104,8 +104,8 @@ def update_book(book_id, user_id, title, author_name, category_name, cover_url, 
 # Streamlit interface
 st.set_page_config(page_title="Book Management", layout="wide")
 
-# User ID (replace with actual user authentication)
-user_id = 1  # Replace with the actual user ID
+
+user_id = 1  
 
 # Add a book
 st.header("Add a Book")
@@ -115,8 +115,11 @@ category_name = st.text_input("Category Name")
 cover_url = st.text_input("Cover URL")
 description = st.text_area("Description")
 if st.button("Add Book"):
-    add_book(user_id, title, author_name, category_name, cover_url, description)
-    st.success(f"Book '{title}' added successfully!")
+    if not title or not author_name or not category_name or not cover_url or not description:
+        st.error("Please fill in all fields.")
+    else:
+        add_book(user_id, title, author_name, category_name, cover_url, description)
+        st.success(f"Book '{title}' added successfully!")
 
 # Display user's books
 st.header("Your Books")
