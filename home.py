@@ -1,7 +1,7 @@
 import streamlit as st
 import psycopg2
 from database import get_db_connection
-from book_management import add_book, fetch_books  # Import the necessary functions
+from book_management import add_book, fetch_books  
 
 st.set_page_config(page_title="Malawi Library", layout="wide")
 

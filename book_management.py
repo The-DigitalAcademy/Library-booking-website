@@ -130,7 +130,7 @@ for index, book in enumerate(books):
     st.write(f"**Author:** {author}")
     st.write(f"**Category:** {category_name}")
     st.write(f"**Description:** {description}")
-    st.image(cover_url, width=150)  # Display the book cover
+    st.image(cover_url, width=150)  
 
     # Update a book
     st.subheader("Update Book")
