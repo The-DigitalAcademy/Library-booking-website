@@ -21,7 +21,6 @@ def register_user(username, email, password):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # Check if email already exists
     cur.execute("SELECT * FROM users WHERE email = %s", (email,))
     existing_user = cur.fetchone()
     if existing_user:
@@ -38,16 +37,17 @@ def register_user(username, email, password):
     
     st.success("Account created successfully! You can now log in.")
 
-# Streamlit UI
-st.title("Sign Up")
+def show():
+    """Displays the sign-up form in Streamlit."""
+    st.title("Sign Up")
 
-username = st.text_input("Username")
-email = st.text_input("Email")
-password = st.text_input("Password", type="password")
+    username = st.text_input("Username")
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
 
-if st.button("Sign Up"):
-    if username and email and password:
-        register_user(username, email, password)
-    else:
-        st.error("All fields are required!")
+    if st.button("Sign Up"):
+        if username and email and password:
+            register_user(username, email, password)
+        else:
+            st.error("All fields are required!")
 
