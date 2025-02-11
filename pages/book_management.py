@@ -1,15 +1,8 @@
 import streamlit as st
 import psycopg2
+from database import get_db_connection
 
-# Database connection
-def get_db_connection():
-    conn = psycopg2.connect(
-        dbname="events",
-        user="dylan",
-        password="super123duper",  
-        host="129.232.211.166"
-    )
-    return conn
+
 
 def fetch_books(user_id):
     conn = get_db_connection()
