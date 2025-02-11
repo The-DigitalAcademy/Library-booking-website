@@ -100,7 +100,7 @@ if st.button("Add Book"):
     add_book(user_id, title, author_name, category_name, cover_url, description)
     st.success(f"Book '{title}' added successfully!")
 
-st.header("Your Books")
+st.header("My Books")
 books = fetch_books(user_id)
 for index, book in enumerate(books):
     book_id, title, author, category_name, cover_url, description = book
