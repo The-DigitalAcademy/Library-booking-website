@@ -19,15 +19,33 @@ def fetch_books():
 def borrow_book(book_id, user_id, collection_date, return_date):
     conn = get_db_connection()
     cur = conn.cursor()
+
     cur.execute("""
-        INSERT INTO bookings (id, user_id, author_id, collection_date, return_date)
-        SELECT b.id, %s, b.author_id, %s, %s
-        FROM books b
-        WHERE b.book_id = %s
-    """, (user_id, collection_date, return_date, book_id))
-    conn.commit()
+        SELECT id, author_id FROM books 
+        WHERE book_id = %s AND availability = TRUE 
+        LIMIT 1
+    """, (str(book_id),))
+    book = cur.fetchone()
+
+    if book:
+        id, author_id = book 
+        cur.execute("""
+            INSERT INTO bookings (id, user_id, author_id, collection_date, return_date)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (id, user_id, author_id, collection_date, return_date))
+
+        cur.execute("""
+            UPDATE books SET availability = FALSE WHERE id = %s
+        """, (id,))
+
+        conn.commit()
+        st.success("Book borrowed successfully!")
+    else:
+        st.error("No available copies of this book.")
+
     cur.close()
     conn.close()
+
 
 st.set_page_config(page_title="Borrow a Book", layout="wide")
 
