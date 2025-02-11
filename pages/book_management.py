@@ -1,8 +1,8 @@
+
+
 import streamlit as st
 import psycopg2
 from database import get_db_connection
-
-
 
 def fetch_books(user_id):
     conn = get_db_connection()
@@ -87,41 +87,47 @@ def update_book(book_id, user_id, title, author_name, category_name, cover_url, 
 # Streamlit interface
 st.set_page_config(page_title="Book Management", layout="wide")
 
+# Check if user_id is in session state
+if 'user_id' not in st.session_state:
+    st.error("Please log in to manage your books.")
+else:
+    user_id = st.session_state.user_id
 
-user_id = 1  
+    st.header("Add a Book")
+    title = st.text_input("Title")
+    author_name = st.text_input("Author Name")
+    category_name = st.text_input("Category Name")
+    cover_url = st.text_input("Cover URL")
+    description = st.text_area("Description")
+    if st.button("Add Book"):
+        if not title or not author_name or not category_name or not cover_url or not description:
+            st.error("Please fill in all fields.")
+        else:
+            add_book(user_id, title, author_name, category_name, cover_url, description)
+            st.success(f"Book '{title}' added successfully!")
 
-st.header("Add a Book")
-title = st.text_input("Title")
-author_name = st.text_input("Author Name")
-category_name = st.text_input("Category Name")
-cover_url = st.text_input("Cover URL")
-description = st.text_area("Description")
-if st.button("Add Book"):
-    add_book(user_id, title, author_name, category_name, cover_url, description)
-    st.success(f"Book '{title}' added successfully!")
+    st.header("My Books")
+    books = fetch_books(user_id)
+    for index, book in enumerate(books):
+        book_id, title, author, category_name, cover_url, description = book
+        st.write(f"**Title:** {title}")
+        st.write(f"**Author:** {author}")
+        st.write(f"**Category:** {category_name}")
+        st.write(f"**Description:** {description}")
+        st.image(cover_url, width=150)  
 
-st.header("My Books")
-books = fetch_books(user_id)
-for index, book in enumerate(books):
-    book_id, title, author, category_name, cover_url, description = book
-    st.write(f"**Title:** {title}")
-    st.write(f"**Author:** {author}")
-    st.write(f"**Category:** {category_name}")
-    st.write(f"**Description:** {description}")
-    st.image(cover_url, width=150)  
+        # Update a book
+        st.subheader("Update Book")
+        new_title = st.text_input(f"New Title for {title}", value=title, key=f"new_title_{book_id}_{index}")
+        new_author_name = st.text_input(f"New Author Name for {title}", value=author, key=f"new_author_{book_id}_{index}")
+        new_category_name = st.text_input(f"New Category Name for {title}", value=category_name, key=f"new_category_{book_id}_{index}")
+        new_cover_url = st.text_input(f"New Cover URL for {title}", value=cover_url, key=f"new_cover_{book_id}_{index}")
+        new_description = st.text_area(f"New Description for {title}", value=description, key=f"new_description_{book_id}_{index}")
+        if st.button(f"Update {title}", key=f"update_{book_id}_{index}"):
+            update_book(book_id, user_id, new_title, new_author_name, new_category_name, new_cover_url, new_description)
+            st.success(f"Book '{new_title}' updated successfully!")
 
-    # Update a book
-    st.subheader("Update Book")
-    new_title = st.text_input(f"New Title for {title}", value=title, key=f"new_title_{book_id}_{index}")
-    new_author_name = st.text_input(f"New Author Name for {title}", value=author, key=f"new_author_{book_id}_{index}")
-    new_category_name = st.text_input(f"New Category Name for {title}", value=category_name, key=f"new_category_{book_id}_{index}")
-    new_cover_url = st.text_input(f"New Cover URL for {title}", value=cover_url, key=f"new_cover_{book_id}_{index}")
-    new_description = st.text_area(f"New Description for {title}", value=description, key=f"new_description_{book_id}_{index}")
-    if st.button(f"Update {title}", key=f"update_{book_id}_{index}"):
-        update_book(book_id, user_id, new_title, new_author_name, new_category_name, new_cover_url, new_description)
-        st.success(f"Book '{new_title}' updated successfully!")
-
-    # Delete a book
-    if st.button(f"Delete {title}", key=f"delete_{book_id}_{index}"):
-        delete_book(book_id, user_id)
-        st.success(f"Book '{title}' deleted successfully!")
+        # Delete a book
+        if st.button(f"Delete {title}", key=f"delete_{book_id}_{index}"):
+            delete_book(book_id, user_id)
+            st.success(f"Book '{title}' deleted successfully!")

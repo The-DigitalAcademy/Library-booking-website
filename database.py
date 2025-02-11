@@ -1,3 +1,5 @@
+
+
 import psycopg2
 import bcrypt
 import re  # Import regex for email validation
@@ -47,12 +49,36 @@ def authenticate_user(email, password):
     cur = conn.cursor()
 
     try:
-        cur.execute("SELECT password FROM userz WHERE email = %s", (email,))
+        cur.execute("SELECT user_id, password FROM userz WHERE email = %s", (email,))
         user = cur.fetchone()
 
-        if user and bcrypt.checkpw(password.encode('utf-8'), user[0].encode('utf-8')):
-            return True
-        return False
+        if user and bcrypt.checkpw(password.encode('utf-8'), user[1].encode('utf-8')):
+            return user[0]  # Return user_id if authentication is successful
+        return None
+    finally:
+        cur.close()
+        conn.close()
+
+# Function to reset password
+def reset_password(email, new_password):
+    if not is_valid_email(email):
+        return "Invalid email format"
+    
+    if len(new_password) < 5:
+        return "Password must be at least 5 characters long"
+    
+    conn = get_db_connection()
+    cur = conn.cursor()
+    hashed_pw = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+    try:
+        cur.execute("UPDATE userz SET password = %s WHERE email = %s", 
+                    (hashed_pw, email))
+        conn.commit()
+        return "Password reset successfully"
+    except psycopg2.Error as e:
+        conn.rollback()
+        return f"Error resetting password: {e}"
     finally:
         cur.close()
         conn.close()

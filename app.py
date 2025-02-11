@@ -76,7 +76,7 @@ st.markdown(
 
 header_col1, header_col2 = st.columns([1, 3])
 with header_col1:
-    st.image("assets/MalawiLibraryLogo.jpg", width=200)  # Corrected path
+    st.image("assets/MalawiLibraryLogo.jpg", width=200)  
     st.markdown('<div class="header-title">Malawi Library</div>', unsafe_allow_html=True)
 with header_col2:
     search_col, login_col, signup_col = st.columns([3, 1, 1])
