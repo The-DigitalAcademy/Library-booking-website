@@ -75,7 +75,9 @@ if tab == "Home":
                 )
                 with st.expander("Show Description"):
                     st.write(description)
-                st.button("Borrow a book", key=f"{book_id}_{index}")
+                if st.button("Borrow a book", key=f"{book_id}_{index}"):
+                    switch_page('borrow_book') 
+                
 
 if tab == "Add Book":
     switch_page('book_management')
