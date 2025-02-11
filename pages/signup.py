@@ -12,9 +12,9 @@ def is_valid_email(email):
 
 def hash_password(password):
     """Hash the password before storing it in the database."""
-    salt = bcrypt.gensalt()  # Generate a salt
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)  # Hash the password
-    return hashed_password.decode('utf-8')  # Decode the hashed password to a string
+    salt = bcrypt.gensalt()  
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)  
+    return hashed_password.decode('utf-8') 
 
 def register_user(username, email, password):
     """Registers a user if the email is valid and password meets the criteria."""
@@ -29,17 +29,17 @@ def register_user(username, email, password):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # Check if email already exists
+    
     cur.execute("SELECT * FROM userz WHERE email = %s", (email,))
     existing_user = cur.fetchone()
     if existing_user:
         st.error("Email already exists. Please use a different email.")
         return
 
-    # Hash the password before saving it
+    
     hashed_password = hash_password(password)
 
-    # Insert new user with hashed password
+    
     cur.execute("INSERT INTO userz (username, email, password) VALUES (%s, %s, %s)",
                 (username, email, hashed_password))
 
