@@ -83,7 +83,7 @@ if tab == "Add Book":
 elif tab == "Profile":
     switch_page('user_profile')
 
-st.write("")  # Ensures space before the footer
+st.write("")  
 st.markdown("<hr>", unsafe_allow_html=True)
 
 with st.container():

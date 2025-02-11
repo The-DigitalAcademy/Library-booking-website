@@ -25,8 +25,6 @@ def show():
         st.rerun()
         
 
-
-# Ensure the script runs independently
 if __name__ == "__main__":
     show()
     

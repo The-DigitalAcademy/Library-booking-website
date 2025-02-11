@@ -1,20 +1,8 @@
-
-
 import streamlit as st
 import psycopg2
 from datetime import date, timedelta
+from database import get_db_connection
 
-
-def get_db_connection():
-    conn = psycopg2.connect(
-        dbname="events",
-        user="dylan",
-        password="super123duper",  # Replace with your actual password
-        host="129.232.211.166"
-    )
-    return conn
-
-# Fetch books from the database
 def fetch_books():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -28,7 +16,6 @@ def fetch_books():
     conn.close()
     return books
 
-# Borrow a book
 def borrow_book(book_id, user_id, collection_date, return_date):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -42,10 +29,8 @@ def borrow_book(book_id, user_id, collection_date, return_date):
     cur.close()
     conn.close()
 
-# Streamlit interface
 st.set_page_config(page_title="Borrow a Book", layout="wide")
 
-# Display books
 st.header("Available Books")
 books = fetch_books()
 for book in books:
@@ -54,14 +39,14 @@ for book in books:
     st.write(f"**Author:** {author}")
     st.write(f"**Availability:** {'Available' if availability else 'Not Available'}")
     st.write(f"**Description:** {description}")
-    st.image(cover_url, width=150)  # Display the book cover
+    st.image(cover_url, width=150) 
     
     if availability:
         collection_date = st.date_input("Collection Date", min_value=date.today(), max_value=date.today() + timedelta(days=2), key=f"collection_{book_id}")
         return_date = st.date_input("Return Date", min_value=date.today(), max_value=date.today() + timedelta(days=30), key=f"return_{book_id}")
         
         if st.button("Borrow", key=book_id):
-            user_id = 1  # Replace with the actual user ID
+            user_id = 1 
             if collection_date > date.today() + timedelta(days=2):
                 st.error("You have two days to collect the book after booking it.")
             elif return_date > collection_date + timedelta(days=30):
