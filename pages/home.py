@@ -74,7 +74,9 @@ if tab == "Home":
                     unsafe_allow_html=True
                 )
                 with st.expander("Show Description"):
-                    st.write(description)
+                     summary = description[:200] + "..." if len(description) > 200 else description
+                     st.write(summary)
+
                 if st.button("Borrow a book", key=f"{book_id}_{index}"):
                     switch_page('borrow_book') 
                 
@@ -102,4 +104,4 @@ with st.container():
 
     with col3:
         st.subheader("Location")
-        st.write("123 Library Street, City, Country")
+        st.write("123 Library Street, Johannesburg, South Africa")
