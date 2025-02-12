@@ -16,7 +16,7 @@ st.markdown("""
         }
          /* Background color for the whole page */
         .stApp {
-            background-color: paige;
+            background-color: light brown;
         }
         /* Navigation tabs */
         .tabs-container {
@@ -154,8 +154,9 @@ for genre_id, genre_name in genres:
                  summary = description[:200] + "..." if len(description) > 200 else description
                  st.write(summary)
 
-            if st.button("Borrow", key=f"{book_id}_{index}"):
-                switch_page('borrow_book') 
+            if st.button("Borrow", key=f"{genre_id}_{book_id}_{index}"):
+                   switch_page('borrow_book') 
+
 
 # Footer Section
 st.markdown("<hr>", unsafe_allow_html=True)
