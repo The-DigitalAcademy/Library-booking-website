@@ -125,6 +125,7 @@ for genre_id, genre_name in genres:
                 unsafe_allow_html=True
             )
             with st.expander("Show Description"):
-                st.write(description)
+                     summary = description[:200] + "..." if len(description) > 200 else description
+                     st.write(summary)
             st.button("Borrow a book", key=f"{book_id}_{index}")
 
