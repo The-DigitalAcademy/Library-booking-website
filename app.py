@@ -4,6 +4,7 @@ import psycopg2
 from streamlit_extras.switch_page_button import switch_page
 from database import get_db_connection
 
+
 def fetch_books():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -117,8 +118,10 @@ for genre_id, genre_name in genres:
                     </div>
                     <div class="book-details">
                         <img src="{cover_url if cover_url != 'No cover' else default_cover_url}" width="200">
-                        <strong>{title}</strong><br>
-                        by {author}
+                    </div>
+                    <div>
+                    <strong>{title}</strong><br>
+                        <em>by {author}</em>
                     </div>
                 </div>
                 """,

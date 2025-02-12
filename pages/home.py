@@ -3,10 +3,9 @@ import psycopg2
 from database import get_db_connection
 from streamlit_extras.switch_page_button import switch_page
 
-# Page config for wide layout
-st.set_page_config(page_title="Malawi Library", layout="wide")
 
-# Custom CSS for styling
+st.set_page_config(page_title="Malawi Library", layout="wide", initial_sidebar_state="collapsed")
+
 st.markdown("""
     <style>
         /* General page styling */
@@ -16,7 +15,7 @@ st.markdown("""
         }
          /* Background color for the whole page */
         .stApp {
-            background-color: light brown;
+            background-color: #FAF3E0;
         }
         /* Navigation tabs */
         .tabs-container {
@@ -43,7 +42,7 @@ st.markdown("""
         .book-container {
             text-align: center;
             padding: 15px;
-            background-color: #ecf0f1;
+            background-color: white;
             border-radius: 10px;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
@@ -60,10 +59,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Navigation Tabs
 st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
 
-col1, col2, col3, col4 = st.columns(4)
+st.subheader("📖 Welcome to the Malawi Library Booking System!")
+st.write("Search for books, borrow them, and manage your library collection.")
+
+col1, col2, col3 = st.columns(3)
 
 with col1:
     if st.button("🏠 Home", key="home"):
@@ -74,23 +75,61 @@ with col2:
         switch_page("book_management")
 
 with col3:
-    if st.button("👤 Profile", key="profile"):
-        switch_page("user_profile")
-
-with col4:
     if st.button("🚪 Logout", key="logout"):
         switch_page("login")
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Home Page Content
-st.subheader("📖 Welcome to the Malawi Library Booking System!")
-st.write("Search for books, borrow them, and manage your library collection.")
 
-query = st.text_input("🔍 Search Books")
-search_button = st.button("Search")
+st.markdown(
+    """
+    <style>
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-# Fetch books & genres from the database
+        .stTextInput>div>div>input {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #f1c40f;
+            border-radius: 8px;
+            width: 6000px;
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .stButton>button {
+            background-color: #f1c40f;
+            color: black;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .stButton>button:hover {
+            background-color: #e67e22;
+            color: white;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown('<div class="search-container">', unsafe_allow_html=True)
+
+query = st.text_input("🔍 Search Books", key="search_input")
+search_button = st.button("Search", key="search_btn")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+
 def fetch_books():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -116,13 +155,11 @@ def fetch_genres():
 books = fetch_books()
 genres = fetch_genres()
 
-# Search Filter
 if search_button and query:
     books = [book for book in books if query.lower() in book[1].lower()]
 
 default_cover_url = "assets/coverpage.jpg"
 
-# Display Books by Genre
 for genre_id, genre_name in genres:
     st.subheader(f"📚 {genre_name}")
     genre_books = [book for book in books if book[4] == genre_id]
@@ -130,7 +167,6 @@ for genre_id, genre_name in genres:
     if not genre_books:
         st.write("No books available in this category.")
 
-    # Display books in a row format
     book_cols = st.columns(3)
     for index, book in enumerate(genre_books[:3]):
         availability, title, author, book_id, _, cover_url, description = book
@@ -143,6 +179,8 @@ for genre_id, genre_name in genres:
                     </div>
                     <div class="book-details">
                         <img src="{cover_url if cover_url != 'No cover' else default_cover_url}" width="150">
+                    </div>
+                    <div>
                         <strong>{title}</strong><br>
                         <em>by {author}</em>
                     </div>
@@ -158,21 +196,86 @@ for genre_id, genre_name in genres:
                    switch_page('borrow_book') 
 
 
-# Footer Section
+st.markdown("<hr>", unsafe_allow_html=True)
+
+st.markdown(
+    """
+    <style>
+        .footer-container {
+            background-color: #2c3e50; /* Dark background for contrast */
+            color: white; /* White text for readability */
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .footer-container h3 {
+            color: #f1c40f; /* Highlighted text color */
+            margin-bottom: 10px;
+        }
+
+        .footer-columns {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            padding: 10px 50px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-container a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer-container a:hover {
+            color: #e67e22; /* Different color on hover */
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: #f1c40f;
+            margin: 20px 0;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown('<div class="footer-container">', unsafe_allow_html=True)
+
 st.markdown("<hr>", unsafe_allow_html=True)
 
 with st.container():
+    st.markdown('<div class="footer-columns">', unsafe_allow_html=True)
+
     col1, col2, col3 = st.columns(3)
 
     with col1:
+        st.markdown('<div class="footer-section">', unsafe_allow_html=True)
         st.subheader("📌 About Us")
         st.write("Malawi Library is an innovative book booking system where users can explore, reserve, and manage books with ease.")
+        st.markdown('</div>', unsafe_allow_html=True)
 
     with col2:
+        st.markdown('<div class="footer-section">', unsafe_allow_html=True)
         st.subheader("📞 Contact Us")
-        st.write("✉️ Email: contact@malawilibrary.com")
+        st.write("✉️ Email: [contact@malawilibrary.com](mailto:contact@malawilibrary.com)")
         st.write("📞 Phone: +123 456 7890")
+        st.markdown('</div>', unsafe_allow_html=True)
 
     with col3:
+        st.markdown('<div class="footer-section">', unsafe_allow_html=True)
         st.subheader("📍 Location")
         st.write("🏢 123 Library Street, Johannesburg, South Africa")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
