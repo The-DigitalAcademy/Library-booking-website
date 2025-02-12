@@ -1,5 +1,5 @@
 -- SELECT id, book_id, availability FROM books WHERE book_id = 'RQ6xDwAAQBAJ';  
-DELETE FROM books WHERE title = 'Mathematians';
+DELETE FROM books WHERE user_id = 1;
 -- DELETE FROM categories  
 -- WHERE category_id = 203;
 
