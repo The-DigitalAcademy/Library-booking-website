@@ -1,5 +1,3 @@
-
-
 import streamlit as st
 import psycopg2
 from database import get_db_connection
@@ -8,7 +6,7 @@ def fetch_books(user_id):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        SELECT b.book_id, b.title, a.author_name, c.category_name, b.cover_url, b.description
+        SELECT b.id, b.title, a.author_name, c.category_name, b.cover_url, b.description
         FROM books b
         JOIN authors a ON b.author_id = a.author_id
         JOIN categories c ON b.category_id = c.category_id
@@ -47,15 +45,15 @@ def add_book(user_id, title, author_name, category_name, cover_url, description)
     cur.close()
     conn.close()
 
-def delete_book(book_id, user_id):
+def delete_book(id, user_id):
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("DELETE FROM books WHERE book_id = %s AND user_id = %s", (book_id, user_id))
+    cur.execute("DELETE FROM books WHERE id = %s AND user_id = %s", (id, user_id))
     conn.commit()
     cur.close()
     conn.close()
 
-def update_book(book_id, user_id, title, author_name, category_name, cover_url, description):
+def update_book(id, user_id, title, author_name, category_name, cover_url, description):
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -78,16 +76,20 @@ def update_book(book_id, user_id, title, author_name, category_name, cover_url, 
     cur.execute("""
         UPDATE books
         SET title = %s, author_id = %s, category_id = %s, cover_url = %s, description = %s
-        WHERE book_id = %s AND user_id = %s
-    """, (title, author_id, category_id, cover_url, description, book_id, user_id))
+        WHERE id = %s AND user_id = %s
+    """, (title, author_id, category_id, cover_url, description, id, user_id))
     conn.commit()
     cur.close()
     conn.close()
 
-# Streamlit interface
+
 st.set_page_config(page_title="Book Management", layout="wide")
 
-# Check if user_id is in session state
+
+if 'refresh' not in st.session_state:
+    st.session_state.refresh = False
+
+
 if 'user_id' not in st.session_state:
     st.error("Please log in to manage your books.")
 else:
@@ -99,36 +101,44 @@ else:
     category_name = st.text_input("Category Name")
     cover_url = st.text_input("Cover URL")
     description = st.text_area("Description")
+    
     if st.button("Add Book"):
         if not title or not author_name or not category_name or not cover_url or not description:
             st.error("Please fill in all fields.")
         else:
             add_book(user_id, title, author_name, category_name, cover_url, description)
             st.success(f"Book '{title}' added successfully!")
+            st.session_state.refresh = True  
+            st.rerun()  
 
     st.header("My Books")
     books = fetch_books(user_id)
+    
     for index, book in enumerate(books):
-        book_id, title, author, category_name, cover_url, description = book
+        id, title, author, category_name, cover_url, description = book
         st.write(f"**Title:** {title}")
         st.write(f"**Author:** {author}")
         st.write(f"**Category:** {category_name}")
         st.write(f"**Description:** {description}")
-        st.image(cover_url, width=150)  
+        st.image(cover_url, width=150)
 
         # Update a book
         st.subheader("Update Book")
-        new_title = st.text_input(f"New Title for {title}", value=title, key=f"new_title_{book_id}_{index}")
-        new_author_name = st.text_input(f"New Author Name for {title}", value=author, key=f"new_author_{book_id}_{index}")
-        new_category_name = st.text_input(f"New Category Name for {title}", value=category_name, key=f"new_category_{book_id}_{index}")
-        new_cover_url = st.text_input(f"New Cover URL for {title}", value=cover_url, key=f"new_cover_{book_id}_{index}")
-        new_description = st.text_area(f"New Description for {title}", value=description, key=f"new_description_{book_id}_{index}")
-        if st.button(f"Update {title}", key=f"update_{book_id}_{index}"):
-            update_book(book_id, user_id, new_title, new_author_name, new_category_name, new_cover_url, new_description)
+        new_title = st.text_input(f"New Title for {title}", value=title, key=f"new_title_{id}_{index}")
+        new_author_name = st.text_input(f"New Author Name for {title}", value=author, key=f"new_author_{id}_{index}")
+        new_category_name = st.text_input(f"New Category Name for {title}", value=category_name, key=f"new_category_{id}_{index}")
+        new_cover_url = st.text_input(f"New Cover URL for {title}", value=cover_url, key=f"new_cover_{id}_{index}")
+        new_description = st.text_area(f"New Description for {title}", value=description, key=f"new_description_{id}_{index}")
+        
+        if st.button(f"Update {title}", key=f"update_{id}_{index}"):
+            update_book(id, user_id, new_title, new_author_name, new_category_name, new_cover_url, new_description)
             st.success(f"Book '{new_title}' updated successfully!")
+            st.session_state.refresh = True
+            st.rerun()  
 
         # Delete a book
-        if st.button(f"Delete {title}", key=f"delete_{book_id}_{index}"):
-            delete_book(book_id, user_id)
+        if st.button(f"Delete {title}", key=f"delete_{id}_{index}"):
+            delete_book(id, user_id)
             st.success(f"Book '{title}' deleted successfully!")
-            st.experimental_rerun()  
+            st.session_state.refresh = True
+            st.rerun()  
