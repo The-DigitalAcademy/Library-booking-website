@@ -39,7 +39,7 @@ def borrow_book(book_id, user_id, collection_date, return_date):
         """, (id,))
 
         conn.commit()
-        st.success("Book borrowed successfully!")
+        st.success(f"Book '{title}' borrowed successfully!")
     else:
         st.error("No available copies of this book.")
 
@@ -47,31 +47,40 @@ def borrow_book(book_id, user_id, collection_date, return_date):
     conn.close()
 
 
-st.set_page_config(page_title="Borrow a Book", layout="wide")
-
 st.header("Available Books")
 books = fetch_books()
-for book in books:
-    availability, title, author, book_id, category_id, cover_url, description = book
-    st.write(f"**Title:** {title}")
-    st.write(f"**Author:** {author}")
-    st.write(f"**Availability:** {'Available' if availability else 'Not Available'}")
-    st.write(f"**Description:** {description}")
-    st.image(cover_url, width=150) 
-    
-    if availability:
-        collection_date = st.date_input("Collection Date", min_value=date.today(), max_value=date.today() + timedelta(days=2), key=f"collection_{book_id}")
-        return_date = st.date_input("Return Date", min_value=date.today(), max_value=date.today() + timedelta(days=30), key=f"return_{book_id}")
+
+user_id = st.session_state.get('user_id')
+if not user_id:
+    st.error("You must be logged in to borrow a book.")
+else:
+    for index, book in enumerate(books):
+        availability, title, author, book_id, category_id, cover_url, description = book
+        st.write(f"**Title:** {title}")
+        st.write(f"**Author:** {author}")
+        st.write(f"**Availability:** {'Available' if availability else 'Not Available'}")
+        st.write(f"**Description:** {description}")
+        st.image(cover_url, width=150) 
         
-                
-        if st.button("Borrow", key=book_id):
-          user_id = st.session_state.get('user_id')
-          if not user_id:
-             st.error("You must be logged in to borrow a book.")
-          elif collection_date > date.today() + timedelta(days=2):
-             st.error("You have two days to collect the book after booking it.")
-          elif return_date > collection_date + timedelta(days=30):
-             st.error("You cannot keep the book for more than a month.")
-          else:
-             borrow_book(book_id, user_id, collection_date, return_date)
-             st.success(f"Book '{title}' borrowed successfully!")
+        if availability:
+            collection_date = st.date_input(
+                "Collection Date", 
+                min_value=date.today(), 
+                max_value=date.today() + timedelta(days=2), 
+                key=f"collection_{user_id}_{book_id}_{index}"  
+            )
+            
+            return_date = st.date_input(
+                "Return Date", 
+                min_value=date.today(), 
+                max_value=collection_date + timedelta(days=30), 
+                key=f"return_{user_id}_{book_id}_{index}" 
+            )
+
+            if st.button("Borrow", key=f"borrow_{user_id}_{book_id}_{index}"):
+                if collection_date > date.today() + timedelta(days=2):
+                    st.error("You have two days to collect the book after booking it.")
+                elif return_date > collection_date + timedelta(days=30):
+                    st.error("You cannot keep the book for more than a month.")
+                else:
+                    borrow_book(book_id, user_id, collection_date, return_date)
