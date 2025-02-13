@@ -12,6 +12,7 @@ st.markdown("""
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
+            display-content: center
         }
          /* Background color for the whole page */
         .stApp {
@@ -21,7 +22,7 @@ st.markdown("""
         .tabs-container {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 5px;
             margin-bottom: 20px;
         }
         .tab-button {
@@ -42,7 +43,7 @@ st.markdown("""
         .book-container {
             text-align: center;
             padding: 15px;
-            background-color: white;
+            background-color: #f4f4f4;
             border-radius: 10px;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
@@ -51,18 +52,23 @@ st.markdown("""
             border-radius: 5px;
         }
         .availability {
+            background-color: brown;
             font-size: 14px;
             font-weight: bold;
-            color: #16a085;
+            # color: #16a085;
             margin-bottom: 10px;
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+            text-align: center;
         }
     </style>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
 
-st.subheader("📖 Welcome to the Malawi Library Booking System!")
-st.write("Search for books, borrow them, and manage your library collection.")
+st.subheader("📖 Welcome to the Malawi Booking Books System!")
+st.write("Search for books, borrow them, and manage your library collection")
 
 col1, col2, col3 = st.columns(3)
 

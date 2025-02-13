@@ -46,6 +46,16 @@ st.set_page_config(page_title="Malawi Library", layout="wide")
 st.markdown(
     """
     <style>
+     /* General page styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display-content: center
+        }
+         /* Background color for the whole page */
+        .stApp {
+            background-color: #FAF3E0;
+        }
     .header-title {
         font-size: 32px;
         font-weight: bold;
@@ -56,9 +66,12 @@ st.markdown(
         gap: 10px;
     }
     .book-container {
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-        padding: 10px;
-        border-radius: 5px;
+         text-align: center;
+            padding: 15px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
     }
     .availability {
         background-color: brown;
@@ -84,7 +97,8 @@ with header_col2:
     with search_col:
         query = st.text_input("Search Books")
         search_button = st.button("Search")
-
+        
+st.markdown('<div class="butt-container">', unsafe_allow_html=True)
 with login_col:
     if st.button("Log In"):
         switch_page('login')
@@ -92,6 +106,51 @@ with login_col:
 with signup_col :
     if st.button("Sign Up"):
         switch_page('signup')
+st.markdown('</div>', unsafe_allow_html=True)   
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+
+st.markdown(
+    """
+    <style>
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stTextInput>div>div>input {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #f1c40f;
+            border-radius: 8px;
+            width: 6000px;
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .stButton>button {
+            background-color: #f1c40f;
+            color: black;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .stButton>button:hover {
+            background-color: #e67e22;
+            color: white;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)  
 
 genres = fetch_genres()
 books = fetch_books()
@@ -120,8 +179,8 @@ for genre_id, genre_name in genres:
                         <img src="{cover_url if cover_url != 'No cover' else default_cover_url}" width="200">
                     </div>
                     <div>
-                    <strong>{title}</strong><br>
-                        <em>by {author}</em>
+                        <strong>{title}</strong><br>
+                        by {author}
                     </div>
                 </div>
                 """,
