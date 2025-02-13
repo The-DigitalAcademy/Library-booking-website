@@ -1,5 +1,4 @@
 
-
 import streamlit as st
 import psycopg2
 from database import get_db_connection
@@ -50,13 +49,8 @@ def add_book(user_id, title, author_name, category_name, cover_url, description)
 def delete_book(id, user_id):
     conn = get_db_connection()
     cur = conn.cursor()
-    # Find the category_id before deleting the book
-    cur.execute("SELECT category_id FROM books WHERE id = %s AND user_id = %s", (id, user_id))
-    category_id = cur.fetchone()[0]
     # Delete the book
     cur.execute("DELETE FROM books WHERE id = %s AND user_id = %s", (id, user_id))
-    # Delete the category
-    cur.execute("DELETE FROM categories WHERE category_id = %s", (category_id,))
     conn.commit()
     cur.close()
     conn.close()
