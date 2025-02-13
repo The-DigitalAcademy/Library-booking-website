@@ -65,8 +65,9 @@ st.markdown(
             background-color: #FAF3E0;
         }
     .header-title {
-        font-size: 32px;
-        font-weight: bold;
+        font-size: 20px;
+        font-weight: lighter;
+        font-style: oblique;
     }
     .header-buttons {
         display: flex;
@@ -74,14 +75,15 @@ st.markdown(
         gap: 10px;
     }
     .book-container {
-         text-align: center;
-            padding: 15px;
-            background-color: #f4f4f4;
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            transition: transform 0.3s ease-in-out;
-            animation: sliding 3s ease-in-out infinite alternate;
+        width: 300px;
+        text-align: center;
+        padding: 15px;
+        background-color: #f4f4f4;
+        border-radius: 10px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        transition: transform 0.3s ease-in-out;
+        animation: sliding 3s ease-in-out infinite alternate;
     }
      /* Hover effect - book moves up slightly */
     .book-container:hover {
@@ -109,8 +111,8 @@ st.markdown(
 
 header_col1, header_col2 = st.columns([1, 3])
 with header_col1:
-    st.image("assets/MalawiLibraryLogo.jpg", width=200)  
-    st.markdown('<div class="header-title">Malawi Library</div>', unsafe_allow_html=True)
+    st.image("assets/MalawiLibraryLogo.jpg", width= 100)  
+    st.markdown('<div class="header-title">📖 Malawi Library</div>', unsafe_allow_html=True)
 with header_col2:
     search_col, login_col, signup_col = st.columns([3, 1, 1])
     with search_col:
@@ -126,8 +128,6 @@ with signup_col :
     if st.button("Sign Up"):
         switch_page('signup')
 st.markdown('</div>', unsafe_allow_html=True)   
-
-st.markdown('</div>', unsafe_allow_html=True)
 
 
 st.markdown(

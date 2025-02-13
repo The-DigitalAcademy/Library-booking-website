@@ -43,6 +43,7 @@ st.markdown("""
 
         /* Book containers */
         .book-container {
+            width: 300px;
             text-align: center;
             padding: 15px;
             background-color: #f4f4f4;
