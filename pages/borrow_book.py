@@ -3,6 +3,61 @@ import psycopg2
 from datetime import date, timedelta
 from database import get_db_connection
 
+# Custom CSS for styling the page
+st.markdown("""
+    <style>
+        body {
+            background-color: #f7f7f7;
+            font-family: 'Arial', sans-serif;
+        }
+        .stTextInput, .stButton, .stError {
+            border-radius: 10px;
+            padding: 12px;
+            margin: 8px 0;
+        }
+        .stTextInput input, .stDateInput input {
+            border: 2px solid #ddd;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .stButton>button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .stButton>button:hover {
+            background-color: #45a049;
+        }
+        .book-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .book-header {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .stError {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .stSuccess {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 def fetch_books():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -39,14 +94,14 @@ def borrow_book(book_id, user_id, collection_date, return_date):
         """, (id,))
 
         conn.commit()
-        st.success(f"Book '{title}' borrowed successfully!")
+        st.success(f"Book '{book_id}' borrowed successfully!")
     else:
         st.error("No available copies of this book.")
 
     cur.close()
     conn.close()
 
-
+# Show the available books and borrow form
 st.header("Available Books")
 books = fetch_books()
 
@@ -56,11 +111,16 @@ if not user_id:
 else:
     for index, book in enumerate(books):
         availability, title, author, book_id, category_id, cover_url, description = book
-        st.write(f"**Title:** {title}")
-        st.write(f"**Author:** {author}")
-        st.write(f"**Availability:** {'Available' if availability else 'Not Available'}")
-        st.write(f"**Description:** {description}")
-        st.image(cover_url, width=150) 
+        short_description = (description[:200] + '...') if len(description) > 200 else description
+
+        st.markdown(f"""
+        <div class="book-container">
+            <p class="book-header">{title} by {author}</p>
+            <p><strong>Availability:</strong> {'Available' if availability else 'Not Available'}</p>
+            <p><strong>Description:</strong> {short_description}</p>
+            <img src="{cover_url}" width="150" style="border-radius: 8px; margin-bottom: 10px;" />
+        </div>
+        """, unsafe_allow_html=True)
         
         if availability:
             collection_date = st.date_input(
@@ -84,5 +144,3 @@ else:
                     st.error("You cannot keep the book for more than a month.")
                 else:
                     borrow_book(book_id, user_id, collection_date, return_date)
-
-
