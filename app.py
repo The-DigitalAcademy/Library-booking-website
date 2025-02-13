@@ -4,7 +4,6 @@ import psycopg2
 from streamlit_extras.switch_page_button import switch_page
 from database import get_db_connection
 
-
 def fetch_books():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -41,7 +40,16 @@ def search_books(query):
     conn.close()
     return books
 
-st.set_page_config(page_title="Malawi Library", layout="wide")
+st.set_page_config(page_title="Malawi Library", layout="wide", initial_sidebar_state="collapsed")
+
+hide_sidebar_style = """
+<style>
+.st-emotion-cache-19u4bdk.eczjsme5 {
+    display: none;
+}
+</style>
+"""
+st.markdown(hide_sidebar_style, unsafe_allow_html=True)
 
 st.markdown(
     """
@@ -72,7 +80,13 @@ st.markdown(
             border-radius: 10px;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            transition: transform 0.3s ease-in-out;
+            animation: sliding 3s ease-in-out infinite alternate;
     }
+     /* Hover effect - book moves up slightly */
+    .book-container:hover {
+        transform: translateY(-10px);
+        }
     .availability {
         background-color: brown;
         color: white;
@@ -83,6 +97,11 @@ st.markdown(
     .book-details {
         text-align: center;
     }
+     /* Sliding animation - books move left and right */
+        @keyframes sliding {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(20px); }
+        }
     </style>
     """,
     unsafe_allow_html=True
@@ -161,7 +180,8 @@ if search_button and query:
 default_cover_url = "assets/coverpage.jpg" 
 
 for genre_id, genre_name in genres:
-    st.subheader(genre_name)
+    
+    st.markdown(f"<h2>{genre_name}</h2><hr style='border: 1px solid #ccc;'>", unsafe_allow_html=True)
     genre_books = [book for book in books if book[4] == genre_id]
     
     book_cols = st.columns(3)  
@@ -192,4 +212,80 @@ for genre_id, genre_name in genres:
             st.button("Borrow", key=f"{genre_id}_{book_id}_{index}")
    
 
+st.markdown(
+    """
+    <style>
+        .footer-container {
+            background-color: #2c3e50; /* Dark background for contrast */
+            color: white; /* White text for readability */
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 50px;
+            text-align: center;
+        }
 
+        .footer-container h3 {
+            color: #f1c40f; /* Highlighted text color */
+            margin-bottom: 10px;
+        }
+
+        .footer-columns {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            padding: 10px 50px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-container a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer-container a:hover {
+            color: #e67e22; /* Different color on hover */
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: #f1c40f;
+            margin: 20px 0;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+st.markdown('<div class="footer-container">', unsafe_allow_html=True)
+
+with st.container():
+    st.markdown('<div class="footer-columns">', unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown('<div class="footer-section">', unsafe_allow_html=True)
+        st.subheader("📌 About Us")
+        st.write("Malawi Library is an innovative book booking system where users can explore, reserve, and manage books with ease.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="footer-section">', unsafe_allow_html=True)
+        st.subheader("📞 Contact Us")
+        st.write("✉️ Email: [contact@malawilibrary.com](mailto:contact@malawilibrary.com)")
+        st.write("📞 Phone: +123 456 7890")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col3:
+        st.markdown('<div class="footer-section">', unsafe_allow_html=True)
+        st.subheader("📍 Location")
+        st.write("🏢 123 Library Street, Johannesburg, South Africa")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+
+st.markdown('</div>', unsafe_allow_html=True)

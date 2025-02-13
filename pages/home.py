@@ -12,12 +12,14 @@ st.markdown("""
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
-            display-content: center
+            display-content: center;
         }
-         /* Background color for the whole page */
+
+        /* Background color for the whole page */
         .stApp {
             background-color: #FAF3E0;
         }
+
         /* Navigation tabs */
         .tabs-container {
             display: flex;
@@ -47,23 +49,41 @@ st.markdown("""
             border-radius: 10px;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            transition: transform 0.3s ease-in-out;
+            animation: sliding 3s ease-in-out infinite alternate;
         }
+
+        /* Hover effect - book moves up slightly */
+        .book-container:hover {
+            transform: translateY(-10px);
+        }
+
+        /* Book image styling */
         .book-details img {
             border-radius: 5px;
         }
+
+        /* Book availability styling */
         .availability {
             background-color: brown;
             font-size: 14px;
             font-weight: bold;
-            # color: #16a085;
             margin-bottom: 10px;
             color: white;
             padding: 5px;
             border-radius: 5px;
             text-align: center;
         }
+
+        /* Sliding animation - books move left and right */
+        @keyframes sliding {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(20px); }
+        }
     </style>
 """, unsafe_allow_html=True)
+
+
 
 st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
 
@@ -167,7 +187,8 @@ if search_button and query:
 default_cover_url = "assets/coverpage.jpg"
 
 for genre_id, genre_name in genres:
-    st.subheader(f"📚 {genre_name}")
+    
+    st.markdown(f"<h2>{genre_name}</h2><hr style='border: 1px solid #ccc;'>", unsafe_allow_html=True)
     genre_books = [book for book in books if book[4] == genre_id]
     
     if not genre_books:
@@ -201,8 +222,6 @@ for genre_id, genre_name in genres:
             if st.button("Borrow", key=f"{genre_id}_{book_id}_{index}"):
                    switch_page('borrow_book') 
 
-
-st.markdown("<hr>", unsafe_allow_html=True)
 
 st.markdown(
     """
@@ -256,8 +275,6 @@ st.markdown(
 
 st.markdown('<div class="footer-container">', unsafe_allow_html=True)
 
-st.markdown("<hr>", unsafe_allow_html=True)
-
 with st.container():
     st.markdown('<div class="footer-columns">', unsafe_allow_html=True)
 
@@ -282,6 +299,5 @@ with st.container():
         st.write("🏢 123 Library Street, Johannesburg, South Africa")
         st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
