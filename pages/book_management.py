@@ -1,13 +1,14 @@
 
 import streamlit as st
 import psycopg2
+import uuid  
 from database import get_db_connection
 
 def fetch_books(user_id):
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
-        SELECT b.id, b.title, a.author_name, c.category_name, b.cover_url, b.description
+        SELECT b.id, b.book_id, b.title, a.author_name, c.category_name, b.cover_url, b.description
         FROM books b
         JOIN authors a ON b.author_id = a.author_id
         JOIN categories c ON b.category_id = c.category_id
@@ -21,6 +22,7 @@ def fetch_books(user_id):
 def add_book(user_id, title, author_name, category_name, cover_url, description):
     conn = get_db_connection()
     cur = conn.cursor()
+    book_id = str(uuid.uuid4())  
     
     cur.execute("SELECT author_id FROM authors WHERE author_name = %s", (author_name,))
     author = cur.fetchone()
@@ -39,9 +41,9 @@ def add_book(user_id, title, author_name, category_name, cover_url, description)
         category_id = category[0]
     
     cur.execute("""
-        INSERT INTO books (user_id, title, author_id, category_id, cover_url, description)
-        VALUES (%s, %s, %s, %s, %s, %s)
-    """, (user_id, title, author_id, category_id, cover_url, description))
+        INSERT INTO books (book_id, user_id, title, author_id, category_id, cover_url, description, availability)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, TRUE)
+    """, (book_id, user_id, title, author_id, category_id, cover_url, description))
     conn.commit()
     cur.close()
     conn.close()
@@ -49,7 +51,6 @@ def add_book(user_id, title, author_name, category_name, cover_url, description)
 def delete_book(id, user_id):
     conn = get_db_connection()
     cur = conn.cursor()
-    # Delete the book
     cur.execute("DELETE FROM books WHERE id = %s AND user_id = %s", (id, user_id))
     conn.commit()
     cur.close()
@@ -86,7 +87,6 @@ def update_book(id, user_id, title, author_name, category_name, cover_url, descr
 
 st.set_page_config(page_title="Book Management", layout="wide")
 
-# Ensure the session state for refresh is initialized
 if 'refresh' not in st.session_state:
     st.session_state.refresh = False
 
@@ -115,14 +115,14 @@ else:
     books = fetch_books(user_id)
     
     for index, book in enumerate(books):
-        id, title, author, category_name, cover_url, description = book
+        id, book_id, title, author, category_name, cover_url, description = book
+        st.write(f"**Book ID:** {book_id}")
         st.write(f"**Title:** {title}")
         st.write(f"**Author:** {author}")
         st.write(f"**Category:** {category_name}")
         st.write(f"**Description:** {description}")
         st.image(cover_url, width=150)
 
-        # Update a book
         st.subheader("Update Book")
         new_title = st.text_input(f"New Title for {title}", value=title, key=f"new_title_{id}_{index}")
         new_author_name = st.text_input(f"New Author Name for {title}", value=author, key=f"new_author_{id}_{index}")
@@ -136,9 +136,9 @@ else:
             st.session_state.refresh = True
             st.rerun()  
 
-        # Delete a book
         if st.button(f"Delete {title}", key=f"delete_{id}_{index}"):
             delete_book(id, user_id)
             st.success(f"Book '{title}' deleted successfully!")
             st.session_state.refresh = True
             st.rerun()
+
