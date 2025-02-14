@@ -130,46 +130,46 @@ with signup_col :
 st.markdown('</div>', unsafe_allow_html=True)   
 
 
-st.markdown(
-    """
-    <style>
-        .search-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+# st.markdown(
+#     """
+#     <style>
+#         .search-container {
+#             display: flex;
+#             justify-content: center;
+#             align-items: center;
+#             gap: 10px;
+#             margin-bottom: 20px;
+#         }
 
-        .stTextInput>div>div>input {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #f1c40f;
-            border-radius: 8px;
-            width: 6000px;
-            background-color: #2c3e50;
-            color: white;
-        }
+#         .stTextInput>div>div>input {
+#             padding: 10px;
+#             font-size: 16px;
+#             border: 2px solid #f1c40f;
+#             border-radius: 8px;
+#             width: 6000px;
+#             background-color: #2c3e50;
+#             color: white;
+#         }
 
-        .stButton>button {
-            background-color: #f1c40f;
-            color: black;
-            font-size: 16px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+#         .stButton>button {
+#             background-color: #f1c40f;
+#             color: black;
+#             font-size: 16px;
+#             padding: 8px 16px;
+#             border-radius: 8px;
+#             border: none;
+#             cursor: pointer;
+#             transition: 0.3s;
+#         }
 
-        .stButton>button:hover {
-            background-color: #e67e22;
-            color: white;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-)  
+#         .stButton>button:hover {
+#             background-color: #e67e22;
+#             color: white;
+#         }
+#     </style>
+#     """,
+#     unsafe_allow_html=True
+# )  
 
 genres = fetch_genres()
 books = fetch_books()

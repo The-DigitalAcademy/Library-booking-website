@@ -51,9 +51,9 @@ def show():
     """Displays the sign-up form in Streamlit."""
     st.title("Sign Up")
 
-    username = st.text_input("Username")
-    email = st.text_input("Email")
-    password = st.text_input("Password", type="password")
+    username = st.text_input("Username", placeholder='nayna')
+    email = st.text_input("Email", placeholder='nayna@gmail.com')
+    password = st.text_input("Password", type="password", placeholder=12345)
 
     if st.button("Sign Up"):
         if username and email and password:
