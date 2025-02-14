@@ -97,9 +97,9 @@ with col1:
     if st.button("🏠 Home", key="home"):
         switch_page("home")
 
-# with col2:
-#     if st.button("📚 Add Book", key="add_book"):
-#         switch_page("book_management")
+with col2:
+    if st.button("📚 Add Book", key="add_book"):
+        switch_page("book_management")
 
 with col3:
     if st.button("🚪 Logout", key="logout"):
@@ -220,8 +220,8 @@ for genre_id, genre_name in genres:
                  summary = description[:200] + "..." if len(description) > 200 else description
                  st.write(summary)
 
-            if st.button("Borrow", key=f"{genre_id}_{book_id}_{index}"):
-                   switch_page('borrow_book') 
+            # if st.button("Borrow", key=f"{genre_id}_{book_id}_{index}"):
+            #        switch_page('borrow_book') 
 
 
 st.markdown(
