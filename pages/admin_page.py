@@ -86,6 +86,37 @@ st.markdown("""
 
 
 
+# Function to check if the user is an admin
+def is_admin():
+    # Replace this with your actual logic to check if the user is an admin
+    # For example, you might store the user role in the session state
+    return st.session_state.get("user_role") == "admin"
+
+# Function to fetch all books from the database
+def fetch_books():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT b.availability, b.title, a.author_name, b.book_id, b.category_id, b.cover_url, b.description
+        FROM books b
+        JOIN authors a ON b.author_id = a.author_id
+    """)
+    books = cur.fetchall()
+    cur.close()
+    conn.close()
+    return books
+
+# Function to fetch genres from the database
+def fetch_genres():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT category_id, category_name FROM categories")
+    genres = cur.fetchall()
+    cur.close()
+    conn.close()
+    return genres
+
+# Admin page
 st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
 
 st.subheader("📖 Welcome to the Malawi Booking Books System!")
@@ -106,7 +137,6 @@ with col3:
         switch_page("login")
 
 st.markdown('</div>', unsafe_allow_html=True)
-
 
 st.markdown(
     """
@@ -156,39 +186,18 @@ search_button = st.button("Search", key="search_btn")
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-
-def fetch_books():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("""
-        SELECT b.availability, b.title, a.author_name, b.book_id, b.category_id, b.cover_url, b.description
-        FROM books b
-        JOIN authors a ON b.author_id = a.author_id
-    """)
-    books = cur.fetchall()
-    cur.close()
-    conn.close()
-    return books
-
-def fetch_genres():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT category_id, category_name FROM categories")
-    genres = cur.fetchall()
-    cur.close()
-    conn.close()
-    return genres
-
+# Fetch books and genres
 books = fetch_books()
 genres = fetch_genres()
 
+# Filter books based on search query
 if search_button and query:
     books = [book for book in books if query.lower() in book[1].lower()]
 
 default_cover_url = "assets/coverpage.jpg"
 
+# Display books by genre
 for genre_id, genre_name in genres:
-    
     st.markdown(f"<h2>{genre_name}</h2><hr style='border: 1px solid #ccc;'>", unsafe_allow_html=True)
     genre_books = [book for book in books if book[4] == genre_id]
     
@@ -217,9 +226,15 @@ for genre_id, genre_name in genres:
                 unsafe_allow_html=True
             )
             with st.expander("📖 Show Description"):
-                 summary = description[:200] + "..." if len(description) > 200 else description
-                 st.write(summary)
+                summary = description[:200] + "..." if len(description) > 200 else description
+                st.write(summary)
 
+            # Add delete button for admins
+            if is_admin():
+                if st.button(f"Delete {title}", key=f"delete_{book_id}"):
+                    delete_book(book_id)
+                    st.success(f"Deleted {title} successfully!")
+                    st.experimental_rerun()  # Refresh the page to reflect changes
             # if st.button("Borrow", key=f"{genre_id}_{book_id}_{index}"):
             #        switch_page('borrow_book') 
 

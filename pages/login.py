@@ -92,10 +92,9 @@ from streamlit_extras.switch_page_button import switch_page
 #     </style>
 # """, unsafe_allow_html=True)
 
-st.markdown('<div class="page-container">', unsafe_allow_html=True)
-st.subheader("📖 Malawi Booking Books System!")
 def show():
-    
+    st.markdown('<div class="page-container">', unsafe_allow_html=True)
+    st.subheader("📖 Malawi Booking Books System!")
     st.title("Log in")
 
     email = st.text_input("Email", placeholder='nayna@gmail.com')
@@ -105,19 +104,28 @@ def show():
         if not email or not password:
             st.error("Please enter both email and password")
         else:
-            user_id = authenticate_user(email, password)
+            user_id, user_role = authenticate_user(email, password)
             if user_id:
+                # Store user_id and role in session state
                 st.session_state.user_id = user_id
+                st.session_state.user_role = user_role
+
                 st.success("Login successful!")
-                switch_page('home')
+                
+                # Redirect based on role
+                if user_role == "admin":
+                    switch_page('admin_page')  # Redirect admins to the admin dashboard
+                else:
+                    switch_page('home')  # Redirect regular users to the home page
             else:
                 st.error("Invalid email or password. Please sign up if you don’t have an account.")
 
     if st.button("Forgot Password?"):
         st.session_state.page = "Reset Password"
-        st.rerun()       
-st.markdown('</div>', unsafe_allow_html=True)
+        st.rerun()
 
+    st.markdown('</div>', unsafe_allow_html=True)
+    
 if __name__ == "__main__":
     show()
    

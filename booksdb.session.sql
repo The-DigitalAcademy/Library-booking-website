@@ -16,6 +16,9 @@
 -- ALTER TABLE userz
 -- ADD COLUMN role VARCHAR(10) CHECK (role IN ('admin', 'user')) NOT NULL DEFAULT 'user';
 
--- DELETE FROM userz WHERE role = 'user';
+DELETE FROM userz WHERE role = 'admin';
 
 -- DELETE FROM bookings WHERE booking_id = 285;
+
+-- ALTER TABLE userz
+--  ADD COLUMN agreement_accepted BOOLEAN DEFAULT FALSE;

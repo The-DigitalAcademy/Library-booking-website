@@ -24,22 +24,30 @@ def register_user(username, email, password):
         st.error("Password must be at least 5 characters long.")
         return
 
+    # Determine role based on email
+    if email.startswith("admin@"):  # Example: Emails ending with "@library.com" are admins
+        role = "admin"
+    else:
+        role = "user"
+
     conn = get_db_connection()
     cur = conn.cursor()
 
-    
+    # Check if the email already exists
     cur.execute("SELECT * FROM userz WHERE email = %s", (email,))
     existing_user = cur.fetchone()
     if existing_user:
         st.error("Email already exists. Please use a different email.")
         return
 
-    
+    # Hash the password
     hashed_password = hash_password(password)
 
-    
-    cur.execute("INSERT INTO userz (username, email, password) VALUES (%s, %s, %s)",
-                (username, email, hashed_password))
+    # Insert the user into the database with the assigned role
+    cur.execute("""
+        INSERT INTO userz (username, email, password, role)
+        VALUES (%s, %s, %s, %s)
+    """, (username, email, hashed_password, role))
 
     conn.commit()
     cur.close()

@@ -1,5 +1,4 @@
 
-
 import psycopg2
 import bcrypt
 import re  # Import regex for email validation
@@ -21,23 +20,35 @@ def is_valid_email(email):
 
 # Function to create user
 def create_user(username, email, password):
+    # Validate email format
     if not is_valid_email(email):
         return "Invalid email format"
     
+    # Validate password length
     if len(password) < 5:
         return "Password must be at least 5 characters long"
     
-    conn = get_db_connection()
-    cur = conn.cursor()
+    # Determine role based on email
+    if email.startswith("admin@"): 
+        role = "admin"
+    else:
+        role = "user"
+    
+    # Hash the password
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
+    # Insert the user into the database
+    conn = get_db_connection()
+    cur = conn.cursor()
     try:
-        cur.execute("INSERT INTO userz (username, email, password) VALUES (%s, %s, %s)", 
-                    (username, email, hashed_pw))
+        cur.execute("""
+            INSERT INTO userz (username, email, password, role)
+            VALUES (%s, %s, %s, %s)
+        """, (username, email, hashed_pw, role))
         conn.commit()
         return "User created successfully"
     except psycopg2.IntegrityError:
-        conn.rollback()  
+        conn.rollback()
         return "Username or email already exists"
     finally:
         cur.close()
@@ -47,14 +58,15 @@ def create_user(username, email, password):
 def authenticate_user(email, password):
     conn = get_db_connection()
     cur = conn.cursor()
-
     try:
-        cur.execute("SELECT user_id, password FROM userz WHERE email = %s", (email,))
+        # Fetch user_id, password, and role
+        cur.execute("SELECT user_id, password, role FROM userz WHERE email = %s", (email,))
         user = cur.fetchone()
 
+        # Verify password and return user_id and role if successful
         if user and bcrypt.checkpw(password.encode('utf-8'), user[1].encode('utf-8')):
-            return user[0]  # Return user_id if authentication is successful
-        return None
+            return user[0], user[2]  # Return user_id and role
+        return None, None  # Return None if authentication fails
     finally:
         cur.close()
         conn.close()
