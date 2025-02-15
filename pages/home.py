@@ -3,9 +3,19 @@ import psycopg2
 from database import get_db_connection
 from streamlit_extras.switch_page_button import switch_page
 
-
+# Page configuration
 st.set_page_config(page_title="Malawi Library", layout="wide", initial_sidebar_state="collapsed")
 
+hide_sidebar_style = """
+<style>
+.st-emotion-cache-19u4bdk.eczjsme5 {
+    display: none;
+}
+</style>
+"""
+st.markdown(hide_sidebar_style, unsafe_allow_html=True)
+
+# Custom CSS for styling
 st.markdown("""
     <style>
         /* General page styling */
@@ -25,7 +35,7 @@ st.markdown("""
             display: flex;
             justify-content: center;
             gap: 5px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .tab-button {
             background-color: #2c3e50;
@@ -43,7 +53,7 @@ st.markdown("""
 
         /* Book containers */
         .book-container {
-            width: 300px;
+            width: 250px;
             text-align: center;
             padding: 15px;
             background-color: #f4f4f4;
@@ -69,9 +79,9 @@ st.markdown("""
             background-color: brown;
             font-size: 14px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             color: white;
-            padding: 5px;
+            padding: 2px;
             border-radius: 5px;
             text-align: center;
         }
@@ -84,30 +94,20 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-
-
+# Navigation bar
 st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
-
-st.subheader("📖 Welcome to the Malawi Booking Books System!")
-st.write("Search for books, borrow them, and manage your library collection")
-
-col1, col2, col3 = st.columns(3)
-
+col1, col2 = st.columns(2)
 with col1:
-    if st.button("🏠 Home", key="home"):
-        switch_page("home")
+   st.subheader("📖 Welcome to the Malawi Booking Books System!")
+   st.write("Search for books, borrow them, and manage your library collection")
 
-# with col2:
-#     if st.button("📚 Add Book", key="add_book"):
-#         switch_page("book_management")
-
-with col3:
+with col2:
     if st.button("🚪 Logout", key="logout"):
         switch_page("login")
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-
+# Search bar
 st.markdown(
     """
     <style>
@@ -125,7 +125,7 @@ st.markdown(
             border: 2px solid #f1c40f;
             border-radius: 8px;
             width: 6000px;
-            background-color: #2c3e50;
+            background-color: white;
             color: white;
         }
 
@@ -150,13 +150,11 @@ st.markdown(
 )
 
 st.markdown('<div class="search-container">', unsafe_allow_html=True)
-
 query = st.text_input("🔍 Search Books", key="search_input")
 search_button = st.button("Search", key="search_btn")
-
 st.markdown('</div>', unsafe_allow_html=True)
 
-
+# Fetch books and genres from the database
 def fetch_books():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -182,23 +180,25 @@ def fetch_genres():
 books = fetch_books()
 genres = fetch_genres()
 
+# Filter books based on search query
 if search_button and query:
     books = [book for book in books if query.lower() in book[1].lower()]
 
 default_cover_url = "assets/coverpage.jpg"
 
+# Display books by genre
 for genre_id, genre_name in genres:
-    
     st.markdown(f"<h2>{genre_name}</h2><hr style='border: 1px solid #ccc;'>", unsafe_allow_html=True)
     genre_books = [book for book in books if book[4] == genre_id]
     
     if not genre_books:
         st.write("No books available in this category.")
 
-    book_cols = st.columns(3)
-    for index, book in enumerate(genre_books[:3]):
+    # Display 6 books per category
+    book_cols = st.columns(3)  # 3 columns per row
+    for index, book in enumerate(genre_books[:6]):  # Display up to 6 books
         availability, title, author, book_id, _, cover_url, description = book
-        with book_cols[index]:
+        with book_cols[index % 3]:  # Cycle through columns
             st.markdown(
                 f"""
                 <div class="book-container">
@@ -217,13 +217,16 @@ for genre_id, genre_name in genres:
                 unsafe_allow_html=True
             )
             with st.expander("📖 Show Description"):
-                 summary = description[:200] + "..." if len(description) > 200 else description
-                 st.write(summary)
+                summary = description[:200] + "..." if len(description) > 200 else description
+                st.write(summary)
 
-            if st.button("Borrow", key=f"{genre_id}_{book_id}_{index}"):
-                   switch_page('borrow_book') 
+            # Display Borrow button only if the book is available
+            if availability:
+                if st.button("Borrow", key=f"{genre_id}_{id}_{index}"):
+                    st.session_state["selected_book"] = id
+                    switch_page('borrow_book')
 
-
+# Footer
 st.markdown(
     """
     <style>
@@ -299,6 +302,5 @@ with st.container():
         st.subheader("📍 Location")
         st.write("🏢 123 Library Street, Johannesburg, South Africa")
         st.markdown('</div>', unsafe_allow_html=True)
-
 
 st.markdown('</div>', unsafe_allow_html=True)

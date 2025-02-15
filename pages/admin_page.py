@@ -122,17 +122,13 @@ st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
 st.subheader("📖 Welcome to the Malawi Booking Books System!")
 st.write("Search for books, borrow them, and manage your library collection")
 
-col1, col2, col3 = st.columns(3)
+col1, col2= st.columns(2)
 
 with col1:
-    if st.button("🏠 Home", key="home"):
-        switch_page("home")
-
-with col2:
     if st.button("📚 Add Book", key="add_book"):
         switch_page("book_management")
 
-with col3:
+with col2:
     if st.button("🚪 Logout", key="logout"):
         switch_page("login")
 
@@ -230,13 +226,13 @@ for genre_id, genre_name in genres:
                 st.write(summary)
 
             # Add delete button for admins
-            if is_admin():
-                if st.button(f"Delete {title}", key=f"delete_{book_id}"):
-                    delete_book(book_id)
-                    st.success(f"Deleted {title} successfully!")
-                    st.experimental_rerun()  # Refresh the page to reflect changes
-            # if st.button("Borrow", key=f"{genre_id}_{book_id}_{index}"):
-            #        switch_page('borrow_book') 
+            # if is_admin():
+            #    id = book[0]  # Assuming the first column is the unique ID
+            #    if st.button(f"Delete {book[1]}", key=f"delete_{id}"):  # Use book_id for a unique key
+            #       delete_book(book_id)  # Pass book_id to the delete function
+            #       st.success(f"Deleted {book[1]} successfully!")
+            #       st.rerun()  # Refresh the page to reflect changes
+            #       switch_page('admin_page')
 
 
 st.markdown(

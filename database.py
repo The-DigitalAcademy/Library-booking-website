@@ -1,10 +1,9 @@
 
 import psycopg2
 import bcrypt
-import re  # Import regex for email validation
+import re  
 import os  
 
-# Database connection function
 def get_db_connection():
     return psycopg2.connect(
         dbname=os.getenv("DB_NAME", "events"),
@@ -13,31 +12,26 @@ def get_db_connection():
         host=os.getenv("DB_HOST", "129.232.211.166")
     )
 
-# Email validation function
 def is_valid_email(email):
     pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(pattern, email) is not None
 
-# Function to create user
 def create_user(username, email, password):
     # Validate email format
     if not is_valid_email(email):
         return "Invalid email format"
-    
-    # Validate password length
+  
     if len(password) < 5:
         return "Password must be at least 5 characters long"
     
-    # Determine role based on email
     if email.startswith("admin@"): 
         role = "admin"
     else:
         role = "user"
     
-    # Hash the password
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-    # Insert the user into the database
+
     conn = get_db_connection()
     cur = conn.cursor()
     try:
@@ -54,12 +48,11 @@ def create_user(username, email, password):
         cur.close()
         conn.close()
 
-# Function to authenticate user (Only allows users who have signed up)
 def authenticate_user(email, password):
     conn = get_db_connection()
     cur = conn.cursor()
     try:
-        # Fetch user_id, password, and role
+       
         cur.execute("SELECT user_id, password, role FROM userz WHERE email = %s", (email,))
         user = cur.fetchone()
 

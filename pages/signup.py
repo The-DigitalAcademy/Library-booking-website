@@ -1,5 +1,6 @@
 import streamlit as st
 from database import get_db_connection
+from streamlit_extras.switch_page_button import switch_page
 import bcrypt
 import re
 
@@ -57,7 +58,8 @@ def register_user(username, email, password):
 
 def show():
     """Displays the sign-up form in Streamlit."""
-    st.title("Sign Up")
+    st.subheader("📖 Malawi Booking Books System!")
+    st.title("Sign up")
 
     username = st.text_input("Username", placeholder='nayna')
     email = st.text_input("Email", placeholder='nayna@gmail.com')
@@ -68,6 +70,8 @@ def show():
             register_user(username, email, password)
         else:
             st.error("All fields are required!")
+    elif st.button("Already Have an Account? Log in!"):
+          switch_page("login")
 
 if __name__ == "__main__":
     show()
