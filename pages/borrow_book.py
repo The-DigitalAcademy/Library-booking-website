@@ -3,9 +3,41 @@ import psycopg2
 from datetime import date, timedelta
 from database import get_db_connection
 
-# Custom CSS for styling the page
+st.set_page_config(page_title="Malawi Library", layout="centered", initial_sidebar_state="collapsed")
+
 st.markdown("""
     <style>
+    header {visibility: hidden;} /* Hides the top menu bar */
+    section[data-testid="stSidebarNav"] {display: none;} /* Hides the sidebar */
+       .stApp {
+            background-color: #FAF3E0;
+        }
+    .book-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .book-header {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        .stButton>button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .stButton>button:hover {
+            background-color: #45a049;
+        }
         body {
             background-color: #f7f7f7;
             font-family: 'Arial', sans-serif;
@@ -34,18 +66,6 @@ st.markdown("""
         }
         .stButton>button:hover {
             background-color: #45a049;
-        }
-        .book-container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .book-header {
-            color: #4CAF50;
-            font-weight: bold;
-            font-size: 18px;
         }
         .stError {
             color: #f44336;
@@ -102,7 +122,7 @@ def borrow_book(book_id, user_id, collection_date, return_date):
     conn.close()
 
 # Show the available books and borrow form
-st.header("Available Books")
+st.header("Malawi Books")
 books = fetch_books()
 
 user_id = st.session_state.get('user_id')

@@ -3,9 +3,16 @@ import psycopg2
 import uuid
 from database import get_db_connection
 
+st.set_page_config(page_title="Malawi Library", layout="wide", initial_sidebar_state="collapsed")
+
 # Custom CSS for styling
 st.markdown("""
     <style>
+    header {visibility: hidden;} /* Hides the top menu bar */
+    section[data-testid="stSidebarNav"] {display: none;} /* Hides the sidebar */
+       .stApp {
+            background-color: #FAF3E0;
+        }
         .book-card {
             background-color: #ffffff;
             padding: 20px;
@@ -222,18 +229,19 @@ else:
                 st.session_state.refresh = True
                 st.rerun()
 
-    st.header("📖 My Books")
+    st.header("📖 Malawi Books")
     books = fetch_books(user_id)
 
     for index, book in enumerate(books):
         id, book_id, title, author, category_name, cover_url, description = book
+        short_description = (description[:200] + '...') if len(description) > 200 else description
         st.markdown(f"""
             <div class="book-card">
                 <img src="{cover_url}" class="book-cover" alt="{title}">
                 <div class="book-title">{title}</div>
                 <div class="book-author">By {author}</div>
                 <div class="book-category">Category: {category_name}</div>
-                <div class="book-description">{description}</div>
+                <div class="book-description">{short_description}</div>
             </div>
         """, unsafe_allow_html=True)
 
