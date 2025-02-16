@@ -3,7 +3,7 @@ import psycopg2
 import uuid
 from database import get_db_connection
 
-st.set_page_config(page_title="Malawi Library", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Malawi Library", layout="centered", initial_sidebar_state="collapsed")
 
 # Custom CSS for styling
 st.markdown("""

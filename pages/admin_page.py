@@ -4,17 +4,20 @@ from database import get_db_connection
 from streamlit_extras.switch_page_button import switch_page
 
 
-st.set_page_config(page_title="Malawi Library", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Malawi Library", layout="centered", initial_sidebar_state="collapsed")
 
 st.markdown("""
     <style>
         header {visibility: hidden;} /* Hides the top menu bar */
         section[data-testid="stSidebarNav"] {display: none;} /* Hides the sidebar */
         /* General page styling */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            display-content: center;
+       .main-container {
+            max-width: 900px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         /* Background color for the whole page */
@@ -45,7 +48,7 @@ st.markdown("""
 
         /* Book containers */
         .book-container {
-            width: 300px;
+            width: 200px;
             text-align: center;
             padding: 15px;
             background-color: #f4f4f4;
@@ -78,20 +81,12 @@ st.markdown("""
             text-align: center;
         }
 
-        /* Sliding animation - books move left and right */
-        @keyframes sliding {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(20px); }
-        }
     </style>
 """, unsafe_allow_html=True)
 
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
 
-
-# Function to check if the user is an admin
 def is_admin():
-    # Replace this with your actual logic to check if the user is an admin
-    # For example, you might store the user role in the session state
     return st.session_state.get("user_role") == "admin"
 
 # Function to fetch all books from the database
@@ -121,8 +116,8 @@ def fetch_genres():
 # Admin page
 st.markdown('<div class="tabs-container">', unsafe_allow_html=True)
 
-st.subheader("📖 Welcome to the Malawi Booking Books System!")
-st.write("Search for books, borrow them, and manage your library collection")
+st.subheader("📖 Welcome to the Malawi Library Books!")
+st.write("Search for books and manage your library collection")
 
 col1, col2= st.columns(2)
 
@@ -153,8 +148,8 @@ st.markdown(
             border: 2px solid #f1c40f;
             border-radius: 8px;
             width: 6000px;
-            background-color: #2c3e50;
-            color: white;
+            background-color: white;
+            color: black;
         }
 
         .stButton>button {
@@ -180,7 +175,6 @@ st.markdown(
 st.markdown('<div class="search-container">', unsafe_allow_html=True)
 
 query = st.text_input("🔍 Search Books", key="search_input")
-search_button = st.button("Search", key="search_btn")
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -189,7 +183,7 @@ books = fetch_books()
 genres = fetch_genres()
 
 # Filter books based on search query
-if search_button and query:
+if query:
     books = [book for book in books if query.lower() in book[1].lower()]
 
 default_cover_url = "assets/coverpage.jpg"
@@ -314,4 +308,5 @@ with st.container():
         st.markdown('</div>', unsafe_allow_html=True)
 
 
+st.markdown('</div>', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
