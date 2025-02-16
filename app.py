@@ -42,27 +42,15 @@ def search_books(query):
 
 st.set_page_config(page_title="Malawi Library", layout="wide", initial_sidebar_state="collapsed")
 
-hide_sidebar_style = """
-<style>
-.st-emotion-cache-19u4bdk.eczjsme5 {
-    display: none;
-}
-</style>
-"""
-st.markdown(hide_sidebar_style, unsafe_allow_html=True)
-
 st.markdown(
     """
     <style>
-     /* General page styling */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            display-content: center
-        }
+    header {visibility: hidden;} /* Hides the top menu bar */
+    section[data-testid="stSidebarNav"] {display: none;} /* Hides the sidebar */
          /* Background color for the whole page */
-        .stApp {
+    .stApp {
             background-color: #FAF3E0;
+            display-content: center;
         }
     .header-title {
         font-size: 20px;
@@ -75,15 +63,12 @@ st.markdown(
         gap: 10px;
     }
     .book-container {
-        width: 300px;
+        width: 200px;
         text-align: center;
-        padding: 15px;
+        padding: 10px;
         background-color: #f4f4f4;
         border-radius: 10px;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        transition: transform 0.3s ease-in-out;
-        animation: sliding 3s ease-in-out infinite alternate;
+        margin-bottom: 10px;
     }
      /* Hover effect - book moves up slightly */
     .book-container:hover {
@@ -99,11 +84,6 @@ st.markdown(
     .book-details {
         text-align: center;
     }
-     /* Sliding animation - books move left and right */
-        @keyframes sliding {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(20px); }
-        }
     </style>
     """,
     unsafe_allow_html=True
@@ -116,8 +96,7 @@ with header_col1:
 with header_col2:
     search_col, login_col, signup_col = st.columns([3, 1, 1])
     with search_col:
-        query = st.text_input("Search Books")
-        search_button = st.button("Search")
+        query = st.text_input("🔍", placeholder="Search Books")
         
 st.markdown('<div class="butt-container">', unsafe_allow_html=True)
 with login_col:
@@ -130,52 +109,51 @@ with signup_col :
 st.markdown('</div>', unsafe_allow_html=True)   
 
 
-# st.markdown(
-#     """
-#     <style>
-#         .search-container {
-#             display: flex;
-#             justify-content: center;
-#             align-items: center;
-#             gap: 10px;
-#             margin-bottom: 20px;
-#         }
+st.markdown(
+    """
+    <style>
+        .search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-#         .stTextInput>div>div>input {
-#             padding: 10px;
-#             font-size: 16px;
-#             border: 2px solid #f1c40f;
-#             border-radius: 8px;
-#             width: 6000px;
-#             background-color: #2c3e50;
-#             color: white;
-#         }
+        .stTextInput>div>div>input {
+            padding: 1px;
+            font-size: 16px;
+            border: 2px solid #f1c40f;
+            border-radius: 5px;
+            width: 6000px;
+            background-color: white;
+            color: black;
+        }
 
-#         .stButton>button {
-#             background-color: #f1c40f;
-#             color: black;
-#             font-size: 16px;
-#             padding: 8px 16px;
-#             border-radius: 8px;
-#             border: none;
-#             cursor: pointer;
-#             transition: 0.3s;
-#         }
+        .stButton>button {
+            background-color: #f1c40f;
+            color: black;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-#         .stButton>button:hover {
-#             background-color: #e67e22;
-#             color: white;
-#         }
-#     </style>
-#     """,
-#     unsafe_allow_html=True
-# )  
+        .stButton>button:hover {
+            background-color: #e67e22;
+            color: white;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)  
 
 genres = fetch_genres()
 books = fetch_books()
 
-if search_button and query:
-    books = search_books(query)
+books = search_books(query)
 
 default_cover_url = "assets/coverpage.jpg" 
 
@@ -184,8 +162,8 @@ for genre_id, genre_name in genres:
     st.markdown(f"<h2>{genre_name}</h2><hr style='border: 1px solid #ccc;'>", unsafe_allow_html=True)
     genre_books = [book for book in books if book[4] == genre_id]
     
-    book_cols = st.columns(3)  
-    for index, book in enumerate(genre_books[:3]): 
+    book_cols = st.columns(5)  
+    for index, book in enumerate(genre_books[:5]): 
         availability, title, author, book_id, _, cover_url, description = book
         
         with book_cols[index]:

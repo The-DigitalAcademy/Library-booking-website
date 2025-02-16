@@ -6,18 +6,12 @@ from streamlit_extras.switch_page_button import switch_page
 # Page configuration
 st.set_page_config(page_title="Malawi Library", layout="wide", initial_sidebar_state="collapsed")
 
-hide_sidebar_style = """
-<style>
-.st-emotion-cache-19u4bdk.eczjsme5 {
-    display: none;
-}
-</style>
-"""
-st.markdown(hide_sidebar_style, unsafe_allow_html=True)
 
 # Custom CSS for styling
 st.markdown("""
     <style>
+        header {visibility: hidden;} /* Hides the top menu bar */
+        section[data-testid="stSidebarNav"] {display: none;} /* Hides the sidebar */
         /* General page styling */
         body {
             font-family: 'Arial', sans-serif;

@@ -8,6 +8,8 @@ st.set_page_config(page_title="Malawi Library", layout="wide", initial_sidebar_s
 
 st.markdown("""
     <style>
+        header {visibility: hidden;} /* Hides the top menu bar */
+        section[data-testid="stSidebarNav"] {display: none;} /* Hides the sidebar */
         /* General page styling */
         body {
             font-family: 'Arial', sans-serif;
