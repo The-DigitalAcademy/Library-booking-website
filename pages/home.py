@@ -30,6 +30,7 @@ st.markdown("""
             justify-content: center;
             gap: 5px;
             margin-bottom: 10px;
+            width: 100px;
         }
         .tab-button {
             background-color: #2c3e50;
@@ -47,7 +48,7 @@ st.markdown("""
 
         /* Book containers */
         .book-container {
-            width: 250px;
+            width: 200px;
             text-align: center;
             padding: 15px;
             background-color: #f4f4f4;
@@ -78,12 +79,6 @@ st.markdown("""
             padding: 2px;
             border-radius: 5px;
             text-align: center;
-        }
-
-        /* Sliding animation - books move left and right */
-        @keyframes sliding {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(20px); }
         }
     </style>
 """, unsafe_allow_html=True)
@@ -120,7 +115,7 @@ st.markdown(
             border-radius: 8px;
             width: 6000px;
             background-color: white;
-            color: white;
+            color: black;
         }
 
         .stButton>button {
@@ -144,8 +139,7 @@ st.markdown(
 )
 
 st.markdown('<div class="search-container">', unsafe_allow_html=True)
-query = st.text_input("🔍 Search Books", key="search_input")
-search_button = st.button("Search", key="search_btn")
+query = st.text_input("🔍", key="search_input", placeholder="Search Books")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Fetch books and genres from the database
@@ -175,7 +169,7 @@ books = fetch_books()
 genres = fetch_genres()
 
 # Filter books based on search query
-if search_button and query:
+if query:
     books = [book for book in books if query.lower() in book[1].lower()]
 
 default_cover_url = "assets/coverpage.jpg"
@@ -189,10 +183,11 @@ for genre_id, genre_name in genres:
         st.write("No books available in this category.")
 
     # Display 6 books per category
-    book_cols = st.columns(3)  # 3 columns per row
-    for index, book in enumerate(genre_books[:6]):  # Display up to 6 books
+    book_cols = st.columns(5)  # 3 columns per row
+    for index, book in enumerate(genre_books[:5]): 
         availability, title, author, book_id, _, cover_url, description = book
-        with book_cols[index % 3]:  # Cycle through columns
+        
+        with book_cols[index]:  # Cycle through columns
             st.markdown(
                 f"""
                 <div class="book-container">
